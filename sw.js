@@ -1,4 +1,4 @@
-const CACHE = 'romaji-v2-20260918-svg-settings-3';
+const CACHE = 'romaji-v2-20260918-navigation-4';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.svg'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
