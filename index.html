@@ -33,6 +33,20 @@ button:not(:disabled):active{transform:scale(.96)}
 :root[data-theme="dark"] .primary{color:#211b29}
 @media(prefers-reduced-motion:reduce){button,.song-row{transition:none!important}button:active,button:hover,.song-row:hover{transform:none!important}}
 
+
+#themeButton svg{display:block;transition:transform .25s ease}
+#themeButton[data-mode="dark"] svg{transform:rotate(180deg)}
+#themeButton[data-mode="light"] svg{transform:rotate(0deg)}
+.romaji{white-space:normal}
+.lyric-line{display:block;width:100%;min-height:0;border:0;border-left:3px solid transparent;background:transparent;text-align:left;font:inherit;line-height:1.95;color:var(--text);padding:6px 12px;margin:2px 0;border-radius:0 10px 10px 0;white-space:pre-wrap;overflow-wrap:anywhere;letter-spacing:inherit}
+.lyric-break{height:1.6em}
+.lyric-line.current-line{background:var(--tint);border-left-color:var(--accent);color:var(--accent)}
+.focus .lyric-line{line-height:2.15}
+@media(hover:hover) and (pointer:fine){.lyric-line:hover{background:var(--soft)}}
+.lyric-line:active{transform:none!important;background:var(--tint)}
+@media(max-width:760px){.lyric-line{padding:7px 10px}.reader-tools{gap:6px}#returnLineButton{font-size:11px;padding:0 10px}}
+@media(prefers-reduced-motion:reduce){#themeButton svg{transition:none}}
+
 </style>
 </head>
 <body>
@@ -50,9 +64,9 @@ button:not(:disabled):active{transform:scale(.96)}
  <div id="updateBanner" class="update-banner" hidden><span>新版已準備好</span><button class="secondary" onclick="activateUpdate()">更新</button></div>
  <header class="topbar"><button class="icon-btn mobile-menu" id="menuButton" onclick="openLibrary()" aria-label="開啟歌單" aria-expanded="false">☰</button><span class="breadcrumb">你的歌詞收藏 / <span id="readerLabel">一起唱歌吧</span></span><div class="top-actions"><button class="icon-btn favorite" id="favoriteCurrent" onclick="toggleFavorite(currentId)" aria-label="收藏歌曲" hidden>♡</button><button class="icon-btn" id="editButton" onclick="openEditor(currentId)" aria-label="編輯歌曲" hidden>✎</button><button class="icon-btn" id="deleteButton" onclick="deleteSong()" aria-label="刪除歌曲" hidden>⌫</button><button class="pill" id="focusButton" onclick="toggleFocus()" aria-pressed="false" hidden>跟唱模式</button><button class="icon-btn" id="readerSettings" onclick="openSettings()" aria-label="設定">⚙</button></div></header>
  <section class="empty" id="emptyView"><div class="empty-orbit" aria-hidden="true">♪</div><h1>把喜歡的歌，留在這裡。</h1><p>羅馬拼音優先，隨時打開、輕輕跟唱。<br>從歌單選一首，或收藏你的第一首歌。</p><button class="primary" onclick="openLibrary()">打開我的歌單 ↗</button></section>
- <div class="lyrics-wrap" id="lyricsWrap" hidden><article class="lyrics-inner"><header class="song-heading"><div class="song-kicker">ROMAJI / 歌詞收藏</div><h1 id="songTitle"></h1><div class="artist-line" id="songArtist"></div><a id="sourceLink" class="source" target="_blank" rel="noopener noreferrer" hidden>歌詞來源 ↗</a></header><pre class="romaji" id="romajiText"></pre><div class="japanese" id="japaneseText" hidden></div></article></div>
+ <div class="lyrics-wrap" id="lyricsWrap" hidden><article class="lyrics-inner"><header class="song-heading"><div class="song-kicker">ROMAJI / 歌詞收藏</div><h1 id="songTitle"></h1><div class="artist-line" id="songArtist"></div><a id="sourceLink" class="source" target="_blank" rel="noopener noreferrer" hidden>歌詞來源 ↗</a></header><div class="romaji" id="romajiText" aria-label="羅馬拼音歌詞，點選一行可標記進度"></div><div class="japanese" id="japaneseText" hidden></div></article></div>
  <div class="progress" id="progressBar" hidden><span id="progressFill"></span></div>
- <footer class="reader-tools" id="readerTools" hidden><div class="tool-group"><span class="tool-label">文字大小</span><button class="size-btn" data-size="15" onclick="setSize(15)" aria-label="小字" aria-pressed="false">A</button><button class="size-btn active" data-size="18" onclick="setSize(18)" aria-label="中字" aria-pressed="true" style="font-size:16px">A</button><button class="size-btn" data-size="22" onclick="setSize(22)" aria-label="大字" aria-pressed="false" style="font-size:20px">A</button></div><div class="tool-group"><button class="pill" id="scrollButton" onclick="toggleScroll()" aria-pressed="false">▶ 自動捲動</button><input class="speed" id="speedInput" type="range" min="5" max="60" value="20" oninput="setSpeed(this.value)" aria-label="捲動速度，每秒像素"><span class="speed-value" id="speedValue">20px/s</span></div><button class="icon-btn" id="themeButton" onclick="toggleTheme()" aria-label="切換深淺色：目前跟隨系統" title="外觀：跟隨系統">◐</button><button class="pill" id="wakeButton" onclick="toggleWake()" aria-label="保持螢幕亮起" aria-pressed="false" title="保持螢幕亮起" hidden>☀ 常亮</button></footer>
+ <footer class="reader-tools" id="readerTools" hidden><div class="tool-group"><span class="tool-label">文字大小</span><button class="size-btn" data-size="15" onclick="setSize(15)" aria-label="小字" aria-pressed="false">A</button><button class="size-btn active" data-size="18" onclick="setSize(18)" aria-label="中字" aria-pressed="true" style="font-size:16px">A</button><button class="size-btn" data-size="22" onclick="setSize(22)" aria-label="大字" aria-pressed="false" style="font-size:20px">A</button></div><div class="tool-group"><button class="pill" id="scrollButton" onclick="toggleScroll()" aria-pressed="false">▶ 自動捲動</button><input class="speed" id="speedInput" type="range" min="5" max="60" value="20" oninput="setSpeed(this.value)" aria-label="捲動速度，每秒像素"><span class="speed-value" id="speedValue">20px/s</span></div><button class="pill" id="returnLineButton" onclick="returnToLine()" title="回到標記的歌詞行" hidden>回到這行</button><button class="icon-btn" id="themeButton" onclick="toggleTheme()" aria-label="切換深淺色：目前跟隨系統" title="外觀：跟隨系統"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" stroke="none"/></svg></button></footer>
 </main>
 </div>
 <div class="overlay" id="overlay" onclick="closeLibrary()" hidden></div>
@@ -70,7 +84,7 @@ const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math
 let config=readJSON(CONFIG_KEY,{}),prefs=Object.assign({size:18,speed:20,japanese:false,recent:{},positions:{},lastId:null},readJSON(PREFS_KEY,{}));
 if(!prefs.recent||typeof prefs.recent!=='object')prefs.recent={};if(!prefs.positions||typeof prefs.positions!=='object')prefs.positions={};
 let observedState=null,dataLoadFailed=false;
-let songs=[],base=[],trash=[],currentId=null,editingId=null,currentTab='all',syncing=false,syncAgain=false,syncTimer=null,focusMode=false,scrolling=false,scrollFrame=null,lastFrame=0,wakeLock=null,wakeWanted=false,waitingWorker=null,toastTimer=null,modalTrigger=null,editorInitial='';
+let songs=[],base=[],trash=[],currentId=null,editingId=null,currentTab='all',syncing=false,syncAgain=false,syncTimer=null,focusMode=false,scrolling=false,scrollFrame=null,lastFrame=0,waitingWorker=null,toastTimer=null,modalTrigger=null,editorInitial='';
 function readJSON(key,fallback){try{const value=JSON.parse(localStorage.getItem(key));return value===null?fallback:value}catch{return fallback}}
 function text(value){return typeof value==='string'?value:''}
 function normalizeLyrics(value){return text(value).replace(/\r\n?/g,'\n').split('\n').map(l=>l.replace(/[\t ]+$/g,'')).join('\n').trim()}
@@ -146,12 +160,33 @@ function savePosition(){if(currentId){prefs.positions[currentId]=$('lyricsWrap')
 function selectSong(id){if(!songs.some(s=>s.id===id))return;savePosition();stopScroll();currentId=id;prefs.lastId=id;prefs.recent[id]=Date.now();savePrefs();refreshReader();renderList();closeLibrary();requestAnimationFrame(()=>{$('lyricsWrap').scrollTop=prefs.positions[id]||0;updateProgress()})}
 function refreshReader(){
  const s=songs.find(x=>x.id===currentId);if(!s){currentId=null;const next=songs.find(x=>x.id===prefs.lastId)||songs[0];if(next){currentId=next.id}else{stopScroll();$('emptyView').hidden=false;['lyricsWrap','readerTools','progressBar','favoriteCurrent','editButton','deleteButton','focusButton'].forEach(id=>$(id).hidden=true);$('readerLabel').textContent='一起唱歌吧';return}}
- const song=songs.find(x=>x.id===currentId);$('emptyView').hidden=true;['lyricsWrap','readerTools','progressBar','favoriteCurrent','editButton','deleteButton','focusButton'].forEach(id=>$(id).hidden=false);$('songTitle').textContent=song.title;$('songArtist').textContent=song.artist||'未填歌手';$('readerLabel').textContent='Romaji';$('romajiText').textContent=song.romaji||'這首歌還沒有羅馬拼音，點擊編輯來補上。';$('japaneseText').textContent=song.japanese;$('japaneseText').hidden=!prefs.japanese||!song.japanese;$('sourceLink').hidden=!safeURL(song.source);if(safeURL(song.source))$('sourceLink').href=safeURL(song.source);$('favoriteCurrent').textContent=song.fav?'♥':'♡';$('favoriteCurrent').classList.toggle('on',song.fav);$('favoriteCurrent').setAttribute('aria-pressed',String(song.fav));updateProgress();
+ const song=songs.find(x=>x.id===currentId);$('emptyView').hidden=true;['lyricsWrap','readerTools','progressBar','favoriteCurrent','editButton','deleteButton','focusButton'].forEach(id=>$(id).hidden=false);$('songTitle').textContent=song.title;$('songArtist').textContent=song.artist||'未填歌手';$('readerLabel').textContent='Romaji';renderLyrics(song);$('japaneseText').textContent=song.japanese;$('japaneseText').hidden=!prefs.japanese||!song.japanese;$('sourceLink').hidden=!safeURL(song.source);if(safeURL(song.source))$('sourceLink').href=safeURL(song.source);$('favoriteCurrent').textContent=song.fav?'♥':'♡';$('favoriteCurrent').classList.toggle('on',song.fav);$('favoriteCurrent').setAttribute('aria-pressed',String(song.fav));updateProgress();
 }
+
+let lyricSongId=null,lyricRaw=null,markedLine=-1;
+function formatReadingLyrics(value){return normalizeLyrics(value).split('\n').map(line=>line.trim().replace(/[\t \u3000]+/g,' ')).join('\n').replace(/\n{3,}/g,'\n\n')}
+function renderLyrics(song){
+ const root=$('romajiText'),raw=song.romaji||'這首歌還沒有羅馬拼音，點擊編輯來補上。';
+ if(lyricSongId===song.id&&lyricRaw===raw)return;
+ lyricSongId=song.id;lyricRaw=raw;markedLine=-1;root.replaceChildren();$('returnLineButton').hidden=true;
+ const lines=formatReadingLyrics(raw).split('\n');
+ lines.forEach((line,index)=>{if(!line){const gap=document.createElement('div');gap.className='lyric-break';gap.setAttribute('aria-hidden','true');root.append(gap);return}
+ const button=document.createElement('button');button.className='lyric-line';button.type='button';button.dataset.line=index;button.textContent=line;button.setAttribute('aria-pressed','false');button.onclick=()=>markLyricLine(index);root.append(button)});
+ const saved=prefs.lineMarks?.[song.id];if(saved&&saved.raw===raw)markLyricLine(saved.index,false);
+}
+function markLyricLine(index,save=true){
+ const lines=[...$('romajiText').querySelectorAll('.lyric-line')];if(!lines.some(line=>Number(line.dataset.line)===index))return;
+ markedLine=index;lines.forEach(line=>{const on=Number(line.dataset.line)===index;line.classList.toggle('current-line',on);line.setAttribute('aria-pressed',String(on))});
+ $('returnLineButton').hidden=false;
+ if(save){prefs.lineMarks=prefs.lineMarks||{};prefs.lineMarks[currentId]={index,raw:lyricRaw};savePrefs()}
+}
+function returnToLine(){const line=$('romajiText').querySelector('.current-line');if(!line)return;stopScroll();const wrap=$('lyricsWrap');wrap.scrollTop+=line.getBoundingClientRect().top-wrap.getBoundingClientRect().top-wrap.clientHeight*.3;updateProgress()}
+function followReadingLine(){if(!scrolling)return;const wrap=$('lyricsWrap'),band=wrap.getBoundingClientRect().top+wrap.clientHeight*.3;const lines=[...$('romajiText').querySelectorAll('.lyric-line')];let nearest=null,distance=Infinity;for(const line of lines){const d=Math.abs(line.getBoundingClientRect().top-band);if(d<distance){distance=d;nearest=line}}if(nearest&&Number(nearest.dataset.line)!==markedLine)markLyricLine(Number(nearest.dataset.line),false)}
+
 function toggleFavorite(id){const song=songs.find(s=>s.id===id);if(!song)return;song.fav=!song.fav;song.updatedAt=new Date().toISOString();commit();refreshReader()}
 function editorValue(){return JSON.stringify(['fTitle','fArtist','fRomaji','fJapanese','fTags','fSource'].map(id=>$(id).value))}
 function openEditor(id=null){stopScroll();editingId=id;const song=songs.find(s=>s.id===id);$('editorTitle').textContent=song?'編輯這首歌':'收藏一首歌';const values={fTitle:song?.title||'',fArtist:song?.artist||'',fRomaji:song?.romaji||'',fJapanese:song?.japanese||'',fTags:song?.tags.join(', ')||'',fSource:song?.source||''};Object.entries(values).forEach(([key,value])=>$(key).value=value);$('editorError').textContent='';$('preview').hidden=true;editorInitial=editorValue();openModal('editorModal')}
-function previewSong(){$('preview').textContent=normalizeLyrics($('fRomaji').value)||'貼上羅馬拼音後，就能在這裡預覽。';$('preview').hidden=!$('preview').hidden}
+function previewSong(){$('preview').textContent=formatReadingLyrics($('fRomaji').value)||'貼上羅馬拼音後，就能在這裡預覽。';$('preview').hidden=!$('preview').hidden}
 function saveSong(){
  const title=$('fTitle').value.trim(),artist=$('fArtist').value.trim(),romaji=normalizeLyrics($('fRomaji').value);if(!title||!romaji){$('editorError').textContent='請填寫歌名與羅馬拼音。';$(title?'fRomaji':'fTitle').focus();return}
  const source=$('fSource').value.trim();if(source&&!safeURL(source)){$('editorError').textContent='來源請使用有效的 http 或 https 網址。';return}
@@ -164,7 +199,7 @@ function openTrash(){renderTrash();openModal('trashModal')}
 function renderTrash(){const root=$('trashList');root.replaceChildren();if(!trash.length){root.textContent='垃圾桶是空的。';return}trash.forEach(s=>{const row=document.createElement('div');row.className='trash-item';const name=document.createElement('span');name.textContent=s.title;const button=document.createElement('button');button.className='secondary';button.textContent='還原';button.onclick=()=>restoreSong(s.id);row.append(name,button);root.append(row)})}
 function restoreSong(id){const s=trash.find(x=>x.id===id);if(!s)return;const copy=clone(s);if(songs.some(x=>x.id===copy.id))copy.id=uid();copy.updatedAt=new Date().toISOString();songs.unshift(copy);trash=trash.filter(x=>x.id!==id);commit();renderTrash();selectSong(copy.id);showToast('歌曲已還原。')}
 function emptyTrash(){if(trash.length&&confirm('永久清空此裝置的垃圾桶？')){trash=[];persist();renderTrash()}}
-function applyTheme(){const theme=['light','dark'].includes(prefs.theme)?prefs.theme:'system';if(theme==='system')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=theme;const label={system:'跟隨系統',light:'淺色',dark:'深色'}[theme];$('themeButton').textContent={system:'◐',light:'☀',dark:'☾'}[theme];$('themeButton').title='外觀：'+label;$('themeButton').setAttribute('aria-label','切換深淺色：目前'+label);const dark=theme==='dark'||(theme==='system'&&matchMedia('(prefers-color-scheme:dark)').matches);document.querySelector('meta[name="theme-color"]').content=dark?'#19191d':'#F6F5F1'}
+function applyTheme(){const theme=['light','dark'].includes(prefs.theme)?prefs.theme:'system';if(theme==='system')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=theme;const label={system:'跟隨系統',light:'淺色',dark:'深色'}[theme];$('themeButton').dataset.mode=theme;$('themeButton').title='外觀：'+label;$('themeButton').setAttribute('aria-label','切換深淺色：目前'+label);const dark=theme==='dark'||(theme==='system'&&matchMedia('(prefers-color-scheme:dark)').matches);document.querySelector('meta[name="theme-color"]').content=dark?'#19191d':'#F6F5F1'}
 function toggleTheme(){const modes=['system','light','dark'];prefs.theme=modes[(modes.indexOf(prefs.theme||'system')+1)%3];applyTheme();savePrefs();showToast('外觀：'+{system:'跟隨系統',light:'淺色',dark:'深色'}[prefs.theme])}
 function setSize(size){prefs.size=[15,18,22].includes(Number(size))?Number(size):18;document.documentElement.style.setProperty('--lyrics-size',prefs.size+'px');document.querySelectorAll('[data-size]').forEach(b=>{const on=Number(b.dataset.size)===prefs.size;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});savePrefs();updateProgress()}
 function setSpeed(speed){prefs.speed=Math.max(5,Math.min(60,Number(speed)||20));$('speedInput').value=prefs.speed;$('speedValue').textContent=prefs.speed+'px/s';savePrefs()}
@@ -174,9 +209,7 @@ function toggleScroll(){if(scrolling){stopScroll();return}const wrap=$('lyricsWr
 let scrollFraction=0;
 function scrollStep(time){if(!scrolling)return;const wrap=$('lyricsWrap');if(lastFrame){scrollFraction+=Math.min(time-lastFrame,100)*prefs.speed/1000;const pixels=Math.floor(scrollFraction);if(pixels){wrap.scrollTop+=pixels;scrollFraction-=pixels}}lastFrame=time;if(wrap.scrollTop>=wrap.scrollHeight-wrap.clientHeight-1){stopScroll();return}scrollFrame=requestAnimationFrame(scrollStep)}
 function stopScroll(){scrolling=false;cancelAnimationFrame(scrollFrame);lastFrame=0;scrollFraction=0;$('scrollButton').textContent='▶ 自動捲動';$('scrollButton').classList.remove('on');$('scrollButton').setAttribute('aria-pressed','false')}
-function updateProgress(){const wrap=$('lyricsWrap'),max=wrap.scrollHeight-wrap.clientHeight;$('progressFill').style.width=(max>0?Math.min(100,wrap.scrollTop/max*100):100)+'%'}
-async function acquireWake(){try{wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{$('wakeButton').classList.remove('on');$('wakeButton').setAttribute('aria-pressed','false');$('wakeButton').textContent='☀ 常亮'});$('wakeButton').classList.add('on');$('wakeButton').setAttribute('aria-pressed','true');$('wakeButton').textContent='☀ 常亮中'}catch{wakeWanted=false;showToast('目前無法保持螢幕亮起，請檢查省電模式。')}}
-async function toggleWake(){wakeWanted=!wakeWanted;if(wakeWanted){await acquireWake();if(wakeWanted)showToast('螢幕常亮已開啟。')}else{await wakeLock?.release();wakeLock=null;showToast('螢幕常亮已關閉。')}}
+function updateProgress(){followReadingLine();const wrap=$('lyricsWrap'),max=wrap.scrollHeight-wrap.clientHeight;$('progressFill').style.width=(max>0?Math.min(100,wrap.scrollTop/max*100):100)+'%'}
 function openLibrary(){if(focusMode&&!matchMedia('(max-width:760px)').matches)toggleFocus();stopScroll();$('library').classList.add('open');$('overlay').hidden=!matchMedia('(max-width:760px)').matches;$('menuButton').setAttribute('aria-expanded','true');$('searchInput').focus()}
 function closeLibrary(){$('library').classList.remove('open');$('overlay').hidden=true;$('menuButton').setAttribute('aria-expanded','false')}
 function openModal(id){stopScroll();modalTrigger=document.activeElement;$(id).hidden=false;requestAnimationFrame(()=>$(id).querySelector('input,button')?.focus())}
@@ -199,11 +232,11 @@ function activateUpdate(){if(!$('editorModal').hidden&&editorValue()!==editorIni
 function showUpdate(reg){if(reg.waiting){waitingWorker=reg.waiting;$('updateBanner').hidden=false}}
 $('lyricsWrap').addEventListener('scroll',()=>{updateProgress();clearTimeout(window.positionTimer);window.positionTimer=setTimeout(savePosition,250)},{passive:true});['touchstart','wheel','pointerdown'].forEach(event=>$('lyricsWrap').addEventListener(event,stopScroll,{passive:true}));$('lyricsWrap').addEventListener('keydown',e=>{if(['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '].includes(e.key))stopScroll()});$('lyricsWrap').tabIndex=0;
 window.addEventListener('pagehide',savePosition);window.addEventListener('online',()=>syncNow());window.addEventListener('offline',()=>setStatus('pending',hasPending()?'離線 · 有待同步變更':'離線 · 使用本機歌單'));window.addEventListener('resize',updateProgress);
-document.addEventListener('visibilitychange',()=>{if(document.hidden){stopScroll();savePosition()}else{if(wakeWanted&&navigator.wakeLock)acquireWake();if(!$('setupModal').hidden)return;if(config.gistId)syncNow()}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stopScroll();savePosition()}else{if(!$('setupModal').hidden)return;if(config.gistId)syncNow()}});
 document.addEventListener('keydown',e=>{const modal=[...document.querySelectorAll('.dialog-backdrop')].reverse().find(m=>!m.hidden);if(e.key==='Escape'){if(modal&&modal.id!=='setupModal')closeModal(modal.id);else closeLibrary()}if(e.key==='Tab'&&modal){const items=[...modal.querySelectorAll('button,input,textarea,a,summary')].filter(x=>!x.disabled&&x.getClientRects().length);const first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}}});
 window.addEventListener('storage',e=>{if(e.key===stateKey())showToast('另一個分頁更新了歌單。請在該分頁繼續編輯，避免互相覆蓋。',null,6000)});
 loadLocal();applyTheme();matchMedia('(prefers-color-scheme:dark)').addEventListener('change',applyTheme);setSize(prefs.size);setSpeed(prefs.speed);renderList();if(prefs.lastId&&songs.some(s=>s.id===prefs.lastId)){currentId=prefs.lastId;refreshReader();requestAnimationFrame(()=>{$('lyricsWrap').scrollTop=prefs.positions[currentId]||0})}
-if(navigator.wakeLock)$('wakeButton').hidden=false;
+
 if(config.gistId&&config.token)syncNow();else if(config.localOnly)setStatus('pending','本機收藏 · 尚未連線');else openModal('setupModal');
 if('serviceWorker' in navigator){let reloading=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloading)return;reloading=true;location.reload()});window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js');showUpdate(reg);reg.addEventListener('updatefound',()=>{const worker=reg.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)showUpdate(reg)})});await reg.update()}catch{}})}
 </script>
