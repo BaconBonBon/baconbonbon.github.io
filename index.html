@@ -2,448 +2,193 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="歌詞">
-<meta name="theme-color" content="#7C3AED">
+<meta name="apple-mobile-web-app-title" content="Uta">
+<meta name="theme-color" content="#F6F5F1">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
-<title>歌詞ライブラリ</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<title>Uta · 你的歌詞收藏</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
-  --accent:#7C3AED;--accent-h:#6D28D9;--accent-light:#EDE9FE;
-  --bg:#F8F7FF;--surface:#FFFFFF;--surface2:#F3F0FF;
-  --text:#1a1a2e;--text2:#64648A;--text3:#A0A0C0;
-  --border:#E8E4FF;--border2:#D4CEFF;
-  --red:#EF4444;--green:#10B981;--radius:10px;
-}
-@media(prefers-color-scheme:dark){
-  :root{--bg:#0F0E1A;--surface:#1C1B2E;--surface2:#252440;--text:#F0EEFF;--text2:#9D9DC0;--text3:#5A5A80;--border:#2E2B4A;--border2:#3D3A60;--accent-light:#2D1B69;}
-}
-html,body{height:100%;overflow:hidden}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:15px}
-.app{display:flex;height:100vh;overflow:hidden}
-
-/* Sidebar */
-.sidebar{width:280px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.4,0,.2,1)}
-.sidebar-header{padding:1.25rem 1rem .75rem;border-bottom:1px solid var(--border);flex-shrink:0}
-.app-brand{display:flex;align-items:center;gap:8px;margin-bottom:4px}
-.app-brand i{font-size:20px;color:var(--accent)}
-.app-brand span{font-size:15px;font-weight:600}
-.app-tagline{font-size:11px;color:var(--text3);margin-left:28px}
-.sync-status{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);margin-left:28px;margin-top:3px}
-.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:background .3s}
-.sync-dot.ok{background:var(--green)}.sync-dot.err{background:var(--red)}.sync-dot.ing{background:#F59E0B;animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.search-box{position:relative;padding:.75rem 1rem;border-bottom:1px solid var(--border);flex-shrink:0}
-.search-box input{width:100%;padding:9px 10px 9px 34px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface2);color:var(--text);outline:none}
-.search-box input::placeholder{color:var(--text3)}
-.search-box input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,.12)}
-.si{position:absolute;left:22px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px;pointer-events:none}
-.filter-tabs{display:flex;padding:.5rem .75rem;gap:4px;flex-shrink:0}
-.ftab{font-size:12px;padding:5px 12px;border-radius:20px;border:none;cursor:pointer;background:transparent;color:var(--text2);font-weight:500;transition:all .15s}
-.ftab.on{background:var(--accent-light);color:var(--accent)}.ftab:hover:not(.on){background:var(--surface2)}
-.song-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.song-list::-webkit-scrollbar{width:4px}.song-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.song-item{display:flex;align-items:center;gap:10px;padding:.65rem 1rem;cursor:pointer;border-left:3px solid transparent;transition:all .12s}
-.song-item:hover{background:var(--surface2)}.song-item.on{background:var(--accent-light);border-left-color:var(--accent)}
-.song-meta{flex:1;min-width:0}
-.song-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.song-artist{font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fav-star{background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:4px;flex-shrink:0;transition:color .15s;line-height:1}
-.fav-star.on{color:var(--red)}.fav-star:hover{color:var(--red)}
-.sidebar-footer{padding:.75rem 1rem;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
-.sf-btn{flex:1;padding:9px 6px;font-size:12px;border-radius:var(--radius);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-weight:500;transition:all .15s}
-.sf-btn.primary{border:1.5px solid var(--accent);background:transparent;color:var(--accent)}.sf-btn.primary:hover{background:var(--accent-light)}
-.sf-btn.ghost{border:1px solid var(--border2);background:transparent;color:var(--text2)}.sf-btn.ghost:hover{background:var(--surface2)}
-
-/* Main */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
-.main-header{display:flex;align-items:center;gap:12px;padding:1rem 1.5rem;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
-.menu-toggle{display:none;background:none;border:none;cursor:pointer;color:var(--text2);font-size:22px;padding:2px}
-.header-info{flex:1;min-width:0}
-.header-title{font-size:18px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.header-artist{font-size:12px;color:var(--text3);margin-top:2px}
-.header-actions{display:flex;gap:6px;flex-shrink:0}
-.hbtn{background:none;border:1px solid var(--border2);border-radius:var(--radius);padding:7px 11px;cursor:pointer;color:var(--text2);font-size:13px;display:flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap}
-.hbtn:hover{background:var(--surface2)}.hbtn.del:hover{color:var(--red);border-color:var(--red)}.hbtn.fav-on{color:var(--red);border-color:rgba(239,68,68,.3)}
-.lyrics-wrap{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2rem 1.5rem}
-.lyrics-inner{max-width:600px;margin:0 auto}
-.lyric-block{margin-bottom:1.75rem}
-.jp{font-size:18px;line-height:1.65;font-weight:400}
-.rm{font-size:13px;line-height:1.9;color:var(--text2);margin-top:3px;letter-spacing:.02em}
-.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--text3);padding:3rem}
-.empty i{font-size:48px;opacity:.25}.empty p{font-size:14px;text-align:center}.empty small{font-size:12px;opacity:.6;text-align:center}
-
-/* Mobile */
-@media(max-width:640px){
-  .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:50;transform:translateX(-100%);width:85vw;max-width:320px;box-shadow:4px 0 24px rgba(0,0,0,.15)}
-  .sidebar.open{transform:translateX(0)}
-  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:49}
-  .overlay.on{display:block}
-  .menu-toggle{display:block}
-  .hbtn span{display:none}
-  .lyrics-wrap{padding:1.25rem 1rem}
-  .main-header{padding:.85rem 1rem}
-}
-
-/* Modal */
-.modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:100}
-@media(min-width:641px){.modal-wrap{align-items:center;padding:1rem}}
-.modal{background:var(--surface);width:100%;max-width:560px;border-radius:20px 20px 0 0;padding:1.5rem 1.25rem 2rem;max-height:92vh;overflow-y:auto}
-@media(min-width:641px){.modal{border-radius:16px;padding:1.5rem}}
-.modal-title{font-size:16px;font-weight:600;margin-bottom:1.25rem;display:flex;align-items:center;gap:8px}
-.modal-title i{color:var(--accent)}
-.fg{margin-bottom:1rem}
-.fl{font-size:12px;color:var(--text2);margin-bottom:5px;display:block;font-weight:500}
-.fi{width:100%;padding:10px 12px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface2);color:var(--text);outline:none}
-.fi:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,.12)}
-.fi::placeholder{color:var(--text3)}
-.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-textarea.fi{resize:vertical;min-height:110px;font-family:inherit;line-height:1.6}
-.fhint{font-size:11px;color:var(--text3);margin-top:4px}
-.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border)}
-.btn-c{padding:9px 18px;font-size:13px;border-radius:var(--radius);border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-weight:500}
-.btn-s{padding:9px 20px;font-size:13px;border-radius:var(--radius);border:none;background:var(--accent);color:#fff;cursor:pointer;font-weight:600}
-.btn-s:hover{background:var(--accent-h)}
-
-/* Setup screen */
-.setup-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:200;padding:1.5rem}
-.setup-card{background:var(--surface);border-radius:16px;border:1px solid var(--border);padding:2rem;width:100%;max-width:440px}
-.setup-logo{display:flex;align-items:center;gap:10px;margin-bottom:.5rem}
-.setup-logo i{font-size:28px;color:var(--accent)}
-.setup-logo span{font-size:20px;font-weight:700}
-.setup-desc{font-size:13px;color:var(--text2);margin-bottom:1.5rem;line-height:1.6}
-.setup-hint{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.5}
-.setup-hint a{color:var(--accent);text-decoration:none}
-.setup-err{font-size:12px;color:var(--red);margin-top:.5rem;display:none}
-
-/* Loading */
-.loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:150}
-.loading-screen i{font-size:40px;color:var(--accent);animation:spin 1.2s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-screen p{font-size:14px;color:var(--text2)}
-
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--text);color:var(--surface);padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;z-index:300;transition:transform .3s,opacity .3s;opacity:0;pointer-events:none;white-space:nowrap}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-.no-songs{text-align:center;padding:2rem 1rem;color:var(--text3);font-size:13px}
+*{box-sizing:border-box} :root{--bg:#f6f5f1;--surface:#fffefa;--soft:#eeece7;--text:#292831;--muted:#797782;--line:#e5e2dd;--accent:#72618e;--hover:#65527f;--tint:#ede8f2;--danger:#b44848;--green:#42785f;--font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--lyrics-size:18px}
+@media(prefers-color-scheme:dark){:root{--bg:#19191d;--surface:#222226;--soft:#2b2b31;--text:#eeeae3;--muted:#b0abb6;--line:#37363e;--accent:#b6a0d3;--hover:#c4b3db;--tint:#383040;--danger:#ee9494;--green:#8cbfa2}}
+html,body{margin:0;height:100%;overscroll-behavior:none}body{background:var(--bg);color:var(--text);font:15px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer;color:inherit}button,input,textarea,select{outline-offset:4px}button{touch-action:manipulation}button:disabled{opacity:.45;cursor:default}button:focus-visible,a:focus-visible{outline:2px solid var(--accent)}button,input,textarea{ -webkit-tap-highlight-color:transparent}button{min-height:44px}a{color:var(--accent)}[hidden]{display:none!important}.app{display:flex;height:100vh;height:100dvh;max-width:1600px;margin:auto}.library{width:340px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}.brand-row{display:flex;align-items:center;justify-content:space-between;padding:30px 26px 20px}.brand{display:flex;align-items:center;gap:12px}.brand img{width:42px;height:42px}.brand-name{font-size:26px;font-weight:600;letter-spacing:-1px}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--muted);margin:3px 0 0}.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;border:0;border-radius:50%;background:transparent;font-size:20px}.icon-btn:hover{background:var(--soft)}.status-btn{border:0;background:transparent;text-align:left;display:flex;align-items:center;gap:8px;padding:0 26px 14px;min-height:32px;font-size:11px;color:var(--muted)}.dot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex-shrink:0}.dot.ok{background:var(--green)}.dot.pending{background:#b39044}.dot.err{background:var(--danger)}.dot.ing{background:var(--accent);animation:pulse 1s infinite}@keyframes pulse{50%{opacity:.35}}.search{margin:0 22px 18px;display:flex;align-items:center;gap:8px;background:var(--soft);border:1px solid transparent;border-radius:14px;padding:0 13px}.search:focus-within{border-color:var(--accent)}.search input{width:100%;border:0;background:transparent;padding:13px 0;color:var(--text);font-size:13px;outline:0}.search span{color:var(--muted)}.tabs{display:flex;gap:5px;margin:0 22px 18px;background:var(--soft);padding:4px;border-radius:12px}.tab{flex:1;border:0;background:transparent;border-radius:9px;font-size:12px;min-height:36px;color:var(--muted)}.tab.active{background:var(--surface);color:var(--text);box-shadow:0 2px 5px #00000008}.list-heading{display:flex;align-items:center;justify-content:space-between;margin:0 26px 12px;font-size:11px;color:var(--muted)}.song-list{flex:1;min-height:0;overflow-y:auto;padding:0 12px 16px;scrollbar-width:thin}.song-row{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:14px;margin:3px 0}.song-row.active{background:var(--tint)}.song-row:hover{background:var(--soft)}.song-row.active:hover{background:var(--tint)}.song-open{flex:1;display:flex;align-items:center;gap:12px;min-width:0;text-align:left;border:0;background:transparent;padding:6px 0}.song-number{font:11px var(--font-mono);color:var(--muted);width:20px;flex-shrink:0}.song-meta{min-width:0}.song-title{display:block;font-size:14px;font-weight:550;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.song-artist{display:block;color:var(--muted);font-size:11px;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.favorite{font-size:18px;color:var(--muted)}.favorite.on{color:var(--accent)}.library-footer{padding:16px 22px calc(20px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}.primary{border:0;background:var(--accent);color:#fff;border-radius:12px;padding:12px 20px;font-size:13px;font-weight:550}.primary:hover{background:var(--hover)}@media(prefers-color-scheme:dark){.primary{color:#211b29}}.add-button{width:100%;display:flex;justify-content:center;align-items:center;gap:12px}.reader{flex:1;min-width:0;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);position:relative}.topbar{display:flex;align-items:center;gap:12px;padding:22px 38px;border-bottom:1px solid var(--line)}.breadcrumb{flex:1;color:var(--muted);font-size:12px;letter-spacing:.3px}.top-actions{display:flex;align-items:center;gap:5px}.pill{border:1px solid var(--line);background:transparent;border-radius:24px;padding:0 16px;font-size:12px;display:inline-flex;align-items:center;gap:8px}.pill.on{background:var(--tint);border-color:var(--tint);color:var(--accent)}.mobile-menu{display:none}.lyrics-wrap{flex:1;overflow-y:auto;scroll-behavior:auto;scrollbar-width:thin;padding:52px 40px 80px}.lyrics-inner{max-width:680px;margin:auto}.song-heading{padding-bottom:36px;margin-bottom:36px;border-bottom:1px solid var(--line)}.song-kicker{color:var(--accent);font-size:10px;letter-spacing:2px;margin-bottom:18px}.song-heading h1{font-size:clamp(26px,4vw,42px);font-weight:550;letter-spacing:-1.1px;line-height:1.25;margin:0 0 12px;overflow-wrap:anywhere}.artist-line{font-size:14px;color:var(--muted)}.romaji{font-family:var(--font-mono);font-size:var(--lyrics-size);line-height:1.95;white-space:pre-wrap;overflow-wrap:anywhere;letter-spacing:-.3px;margin:0}.japanese{border-top:1px solid var(--line);margin-top:40px;padding-top:28px;color:var(--muted);font-size:14px;line-height:2;white-space:pre-wrap;overflow-wrap:anywhere}.japanese:before{content:'日文原文';display:block;font-size:11px;letter-spacing:1px;margin-bottom:16px}.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}.empty-orbit{width:100px;height:100px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;margin-bottom:24px;color:var(--accent);font:44px Georgia,serif;position:relative}.empty-orbit:after{content:'';position:absolute;width:7px;height:7px;background:var(--accent);border-radius:50%;right:4px;top:18px}.empty h1{font-size:27px;font-weight:500;letter-spacing:-.8px;margin:0 0 12px}.empty p{font-size:13px;color:var(--muted);line-height:1.9;margin:0 0 24px}.reader-tools{border-top:1px solid var(--line);background:var(--surface);padding:12px 30px calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:12px}.tool-group{display:flex;align-items:center;gap:8px}.tool-label{font-size:10px;color:var(--muted);letter-spacing:.5px;margin-right:8px}.size-btn{border:0;background:transparent;border-radius:9px;width:40px;min-height:36px;font-size:13px}.size-btn.active{background:var(--tint);color:var(--accent)}.speed{width:85px;accent-color:var(--accent)}.speed-value{font:10px var(--font-mono);color:var(--muted);min-width:35px}.progress{height:2px;background:var(--line);flex-shrink:0}.progress span{display:block;background:var(--accent);height:100%;width:0}.focus .library{display:none}.focus .breadcrumb,.focus #editButton,.focus #deleteButton,.focus #readerSettings,.focus #favoriteCurrent{display:none}.focus .topbar{justify-content:space-between}.focus .lyrics-inner{max-width:760px}.focus #focusButton{margin-left:auto}.overlay{position:fixed;inset:0;background:#19151e55;backdrop-filter:blur(3px);z-index:20}.dialog-backdrop{position:fixed;inset:0;background:#19151e66;backdrop-filter:blur(5px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}.dialog{width:100%;max-width:580px;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:28px;max-height:90vh;max-height:90dvh;overflow:auto;box-shadow:0 24px 100px #0002}.dialog-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.dialog h2{font-size:22px;font-weight:550;letter-spacing:-.7px;margin:0}.dialog p{font-size:12px;color:var(--muted);line-height:1.8}.field{margin:18px 0}.field label{display:block;font-size:12px;margin-bottom:8px}.input{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:12px;padding:12px;font-size:14px}.input:focus{outline:1px solid var(--accent)}textarea.input{font:13px/1.8 var(--font-mono);resize:vertical;min-height:190px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid .field{margin:0}.hint{display:block;font-size:11px;color:var(--muted);margin-top:7px;line-height:1.6}.dialog-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding-top:20px;margin-top:22px;border-top:1px solid var(--line)}.secondary{border:1px solid var(--line);background:transparent;border-radius:12px;padding:10px 16px;font-size:12px}.secondary:hover{background:var(--soft)}.settings-section{border-top:1px solid var(--line);margin-top:24px;padding-top:18px}.settings-section h3{font-size:13px;font-weight:550;margin:0 0 12px}.backup-buttons{display:flex;gap:10px;flex-wrap:wrap}.check{display:flex;align-items:center;gap:10px;font-size:13px;margin:16px 0;line-height:1.6}.check input{accent-color:var(--accent);width:17px;height:17px}.error{font-size:12px;color:var(--danger);line-height:1.7}.preview{font:13px/1.8 var(--font-mono);white-space:pre-wrap;overflow-wrap:anywhere;background:var(--bg);padding:18px;border-radius:12px;max-height:240px;overflow:auto;margin-top:14px}.toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--text);color:var(--surface);padding:12px 18px;border-radius:14px;font-size:12px;max-width:min(90vw,520px);z-index:200;box-shadow:0 5px 30px #0002}.toast button{color:inherit;border:0;background:transparent;text-decoration:underline;min-height:30px;margin-left:12px}.update-banner{display:flex;align-items:center;justify-content:center;gap:12px;background:var(--tint);color:var(--accent);font-size:12px;padding:8px}.update-banner button{min-height:32px}.no-songs{padding:40px 14px;text-align:center;font-size:12px;color:var(--muted);line-height:1.9}.trash-item{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:12px;padding:10px 0;font-size:13px}.setup .dialog{max-width:440px}.setup .brand{margin-bottom:26px}.setup .dialog-actions{flex-wrap:wrap}.setup .primary{width:100%}.setup .secondary{width:100%}.source{display:inline-block;margin-top:16px;font-size:11px;text-decoration:none}.focus .mobile-menu{display:block}.visually-hidden{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}
+@media(max-width:760px){.input,.search input,textarea.input{font-size:16px}.library{position:fixed;inset:0 auto 0 0;z-index:30;width:min(88vw,360px);transform:translateX(-105%);transition:transform .25s ease;box-shadow:15px 0 60px #0001}.library.open{transform:translateX(0)}.mobile-menu{display:inline-flex}.topbar{padding:12px 14px;gap:6px}.top-actions{gap:0}.breadcrumb{font-size:11px}.pill{padding:0 12px}.top-actions .icon-btn{width:38px}.lyrics-wrap{padding:32px 24px 60px}.song-heading{margin-bottom:26px;padding-bottom:26px}.song-heading h1{font-size:31px}.reader-tools{padding:10px 14px calc(12px + env(safe-area-inset-bottom));flex-wrap:wrap;gap:8px}.tool-label{display:none}.tool-group{gap:3px}.size-btn{width:34px;min-height:40px}.speed{width:64px}.speed-value{min-width:30px}.reader-tools .pill{font-size:11px;padding:0 10px}.dialog-backdrop{padding:0;align-items:flex-end}.dialog{border-radius:24px 24px 0 0;padding:24px 22px calc(24px + env(safe-area-inset-bottom));max-height:92dvh}.setup{align-items:center;padding:20px}.setup .dialog{border-radius:24px;max-height:90dvh}.grid{grid-template-columns:1fr;gap:18px}.focus .library{display:flex}.focus .lyrics-wrap{padding-top:28px}.brand-row{padding-top:26px}}
+@media(max-width:380px){.breadcrumb{display:none}.top-actions{margin-left:auto}.reader-tools{justify-content:center}.speed-value{display:none}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-
-<!-- Setup Screen -->
-<div class="setup-screen" id="setupScreen" style="display:none">
-  <div class="setup-card">
-    <div class="setup-logo"><i class="ti ti-music"></i><span>歌詞ライブラリ</span></div>
-    <div class="setup-desc">首次使用請輸入你的 GitHub Gist 設定。<br>資料只會存在這個裝置的瀏覽器裡，不會出現在任何檔案中。</div>
-    <div class="fg">
-      <label class="fl">Gist ID</label>
-      <input class="fi" id="setupGistId" placeholder="e1b78538cfa0e4d22e2a8bf4a9e82e1d" autocomplete="off" spellcheck="false">
-      <div class="setup-hint">Gist 網址最後那串英數字</div>
-    </div>
-    <div class="fg">
-      <label class="fl">GitHub Personal Access Token</label>
-      <input class="fi" id="setupToken" type="password" placeholder="ghp_xxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false">
-      <div class="setup-hint">需要 <strong>gist</strong> 權限。<a href="https://github.com/settings/tokens" target="_blank">前往 GitHub 產生 Token →</a></div>
-    </div>
-    <div class="setup-err" id="setupErr"></div>
-    <div class="modal-actions" style="border:none;padding-top:.5rem;margin-top:.5rem">
-      <button class="btn-s" onclick="saveSetup()" style="width:100%;justify-content:center">連線並開始使用</button>
-    </div>
-    <div style="text-align:center;margin-top:1rem">
-      <button onclick="openSettingsModal()" style="background:none;border:none;font-size:12px;color:var(--text3);cursor:pointer;text-decoration:underline">已有設定，重新設定</button>
-    </div>
-  </div>
+<div class="app" id="app">
+<aside class="library" id="library" aria-label="歌曲收藏">
+ <div class="brand-row"><div class="brand"><img src="icon.svg" alt=""><div><div class="brand-name">Uta<span style="color:var(--accent)">.</span></div><p class="eyebrow">A LITTLE SPACE FOR SONGS</p></div></div><button class="icon-btn" onclick="openSettings()" aria-label="設定">⚙</button></div>
+ <button class="status-btn" onclick="syncNow(true)" title="點擊重試同步"><span class="dot" id="syncDot"></span><span id="syncLabel" role="status">本機收藏</span></button>
+ <label class="search"><span aria-hidden="true">⌕</span><input type="search" id="searchInput" placeholder="找歌名、歌手或一句歌詞" oninput="renderList()" aria-label="搜尋歌名、歌手、羅馬拼音" autocomplete="off"></label>
+ <div class="tabs" role="tablist" aria-label="歌曲篩選"><button class="tab active" role="tab" aria-selected="true" data-tab="all" onclick="setTab('all')">全部</button><button class="tab" role="tab" aria-selected="false" data-tab="fav" onclick="setTab('fav')">收藏</button><button class="tab" role="tab" aria-selected="false" data-tab="recent" onclick="setTab('recent')">最近開啟</button></div>
+ <div class="list-heading"><span id="listLabel">你的歌單</span><span id="songCount">0 首</span></div>
+ <div class="song-list" id="songList"></div>
+ <div class="library-footer"><button class="primary add-button" onclick="openEditor()"><span aria-hidden="true">＋</span> 新增歌曲</button></div>
+</aside>
+<main class="reader">
+ <div id="updateBanner" class="update-banner" hidden><span>新版已準備好</span><button class="secondary" onclick="activateUpdate()">更新</button></div>
+ <header class="topbar"><button class="icon-btn mobile-menu" id="menuButton" onclick="openLibrary()" aria-label="開啟歌單" aria-expanded="false">☰</button><span class="breadcrumb">你的歌詞收藏 / <span id="readerLabel">一起唱歌吧</span></span><div class="top-actions"><button class="icon-btn favorite" id="favoriteCurrent" onclick="toggleFavorite(currentId)" aria-label="收藏歌曲" hidden>♡</button><button class="icon-btn" id="editButton" onclick="openEditor(currentId)" aria-label="編輯歌曲" hidden>✎</button><button class="icon-btn" id="deleteButton" onclick="deleteSong()" aria-label="刪除歌曲" hidden>⌫</button><button class="pill" id="focusButton" onclick="toggleFocus()" aria-pressed="false" hidden>跟唱模式</button><button class="icon-btn" id="readerSettings" onclick="openSettings()" aria-label="設定">⚙</button></div></header>
+ <section class="empty" id="emptyView"><div class="empty-orbit" aria-hidden="true">♪</div><h1>把喜歡的歌，留在這裡。</h1><p>羅馬拼音優先，隨時打開、輕輕跟唱。<br>從歌單選一首，或收藏你的第一首歌。</p><button class="primary" onclick="openLibrary()">打開我的歌單 ↗</button></section>
+ <div class="lyrics-wrap" id="lyricsWrap" hidden><article class="lyrics-inner"><header class="song-heading"><div class="song-kicker">ROMAJI / 歌詞收藏</div><h1 id="songTitle"></h1><div class="artist-line" id="songArtist"></div><a id="sourceLink" class="source" target="_blank" rel="noopener noreferrer" hidden>歌詞來源 ↗</a></header><pre class="romaji" id="romajiText"></pre><div class="japanese" id="japaneseText" hidden></div></article></div>
+ <div class="progress" id="progressBar" hidden><span id="progressFill"></span></div>
+ <footer class="reader-tools" id="readerTools" hidden><div class="tool-group"><span class="tool-label">文字大小</span><button class="size-btn" data-size="15" onclick="setSize(15)" aria-label="小字" aria-pressed="false">A</button><button class="size-btn active" data-size="18" onclick="setSize(18)" aria-label="中字" aria-pressed="true" style="font-size:16px">A</button><button class="size-btn" data-size="22" onclick="setSize(22)" aria-label="大字" aria-pressed="false" style="font-size:20px">A</button></div><div class="tool-group"><button class="pill" id="scrollButton" onclick="toggleScroll()" aria-pressed="false">▶ 自動捲動</button><input class="speed" id="speedInput" type="range" min="5" max="60" value="20" oninput="setSpeed(this.value)" aria-label="捲動速度，每秒像素"><span class="speed-value" id="speedValue">20px/s</span></div><button class="icon-btn" id="wakeButton" onclick="toggleWake()" aria-label="保持螢幕亮起" aria-pressed="false" title="保持螢幕亮起" hidden>☀</button></footer>
+</main>
 </div>
-
-<!-- Loading Screen -->
-<div class="loading-screen" id="loadingScreen" style="display:none">
-  <i class="ti ti-loader-2"></i>
-  <p>正在從 Gist 載入歌單…</p>
-</div>
-
-<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-
-<div class="app">
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="app-brand"><i class="ti ti-music"></i><span>歌詞ライブラリ</span></div>
-      <div class="app-tagline">日文歌詞羅馬拼音收藏庫</div>
-      <div class="sync-status"><div class="sync-dot" id="syncDot"></div><span id="syncLabel">-</span></div>
-    </div>
-    <div class="search-box">
-      <i class="ti ti-search si"></i>
-      <input type="search" id="searchInput" placeholder="搜尋歌名、歌手…" oninput="renderList()" autocomplete="off">
-    </div>
-    <div class="filter-tabs">
-      <button class="ftab on" onclick="setTab('all',this)">全部</button>
-      <button class="ftab" onclick="setTab('fav',this)">收藏</button>
-    </div>
-    <div class="song-list" id="songList"></div>
-    <div class="sidebar-footer">
-      <button class="sf-btn primary" onclick="openAddModal()"><i class="ti ti-plus"></i> 新增歌曲</button>
-      <button class="sf-btn ghost" onclick="manualSync()"><i class="ti ti-refresh"></i> 重新整理</button>
-    </div>
-  </div>
-
-  <div class="main">
-    <div class="main-header" id="mainHeader" style="display:none">
-      <button class="menu-toggle" onclick="openSidebar()"><i class="ti ti-menu-2"></i></button>
-      <div class="header-info">
-        <div class="header-title" id="hTitle"></div>
-        <div class="header-artist" id="hArtist"></div>
-      </div>
-      <div class="header-actions">
-        <button class="hbtn" id="hFavBtn" onclick="toggleFavCurrent()"><i class="ti ti-heart"></i><span>收藏</span></button>
-        <button class="hbtn" onclick="editCurrent()"><i class="ti ti-edit"></i><span>編輯</span></button>
-        <button class="hbtn del" onclick="deleteCurrent()"><i class="ti ti-trash"></i></button>
-        <button class="hbtn" onclick="openSettingsModal()" title="設定"><i class="ti ti-settings"></i></button>
-      </div>
-    </div>
-    <div id="emptyView" class="empty">
-      <i class="ti ti-music-off"></i>
-      <p>選擇一首歌來查看歌詞</p>
-      <small>或點擊「新增歌曲」開始建立收藏</small>
-    </div>
-    <div class="lyrics-wrap" id="lyricsWrap" style="display:none">
-      <div class="lyrics-inner" id="lyricsInner"></div>
-    </div>
-  </div>
-</div>
-
-<!-- Add/Edit Modal -->
-<div class="modal-wrap" id="editModal" style="display:none" onclick="closeModalOut(event,'editModal')">
-  <div class="modal">
-    <div class="modal-title"><i class="ti ti-music"></i><span id="editModalTitle">新增歌曲</span></div>
-    <div class="fr">
-      <div class="fg"><label class="fl">歌名（日文）</label><input class="fi" id="fTitle" placeholder="夜に駆ける"></div>
-      <div class="fg"><label class="fl">歌手 / 樂團</label><input class="fi" id="fArtist" placeholder="YOASOBI"></div>
-    </div>
-    <div class="fg">
-      <label class="fl">日文歌詞</label>
-      <textarea class="fi" id="fJapanese" placeholder="每行一句日文歌詞&#10;沈むように 溶けてゆくように"></textarea>
-      <div class="fhint">每行對應一行羅馬拼音</div>
-    </div>
-    <div class="fg">
-      <label class="fl">羅馬拼音</label>
-      <textarea class="fi" id="fRomaji" placeholder="每行一句羅馬拼音&#10;Shizumu you ni tokete yuku you ni"></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-c" onclick="closeModal('editModal')">取消</button>
-      <button class="btn-s" onclick="saveSong()">儲存</button>
-    </div>
-  </div>
-</div>
-
-<!-- Settings Modal -->
-<div class="modal-wrap" id="settingsModal" style="display:none" onclick="closeModalOut(event,'settingsModal')">
-  <div class="modal">
-    <div class="modal-title"><i class="ti ti-settings"></i>Gist 設定</div>
-    <div class="fg">
-      <label class="fl">Gist ID</label>
-      <input class="fi" id="cfgGistId" spellcheck="false">
-    </div>
-    <div class="fg">
-      <label class="fl">GitHub Token</label>
-      <input class="fi" id="cfgToken" type="password" spellcheck="false">
-    </div>
-    <div class="modal-actions">
-      <button class="btn-c" onclick="closeModal('settingsModal')">取消</button>
-      <button class="btn-s" onclick="applySettings()">儲存並重新連線</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
+<div class="overlay" id="overlay" onclick="closeLibrary()" hidden></div>
+<div class="dialog-backdrop setup" id="setupModal" hidden><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="setupTitle"><div class="brand"><img src="icon.svg" alt=""><div class="brand-name" id="setupTitle">你好，這裡是 Uta.</div></div><p>收藏你喜歡的歌，隨時跟唱。<br>連接 GitHub Gist，讓手機與電腦共用歌單。<br>連線設定只保存在這個瀏覽器。</p><div class="field"><label for="setupGist">Gist ID</label><input class="input" id="setupGist" autocomplete="off" spellcheck="false" placeholder="Gist 網址最後一段 ID"></div><div class="field"><label for="setupToken">GitHub Token</label><input class="input" id="setupToken" type="password" autocomplete="off" spellcheck="false" placeholder="具有 gist 權限的 Personal Access Token"><span class="hint"><a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">前往 GitHub 建立 Token ↗</a></span></div><p class="error" id="setupError" role="alert"></p><div class="dialog-actions"><button class="primary" onclick="saveSetup()">連線並開始</button><button class="secondary" onclick="useLocal()">先使用本機收藏</button></div></section></div>
+<div class="dialog-backdrop" id="editorModal" hidden onclick="closeOutside(event,'editorModal')"><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="editorTitle"><div class="dialog-header"><h2 id="editorTitle">收藏一首歌</h2><button class="icon-btn" onclick="closeModal('editorModal')" aria-label="關閉編輯">×</button></div><div class="grid"><div class="field"><label for="fTitle">歌名</label><input class="input" id="fTitle" placeholder="歌曲名稱"></div><div class="field"><label for="fArtist">歌手 / 樂團</label><input class="input" id="fArtist" placeholder="歌手名稱"></div></div><div class="field"><label for="fRomaji">羅馬拼音</label><textarea class="input" id="fRomaji" placeholder="把 romaji 貼在這裡，空行會保留為段落。"></textarea><span class="hint">保留你的換行與段落，方便跟唱。</span></div><details><summary style="font-size:12px;color:var(--muted);cursor:pointer">更多資訊 · 標籤、來源與日文原文</summary><div class="field"><label for="fTags">標籤</label><input class="input" id="fTags" placeholder="動畫, 想練, 抒情歌"><span class="hint">使用逗號分隔，搜尋時也能找到。</span></div><div class="field"><label for="fSource">來源網址（選填）</label><input class="input" id="fSource" type="url" placeholder="https://…"></div><div class="field"><label for="fJapanese">日文原文（選填）</label><textarea class="input" id="fJapanese"></textarea></div></details><p class="error" id="editorError" role="alert"></p><pre class="preview" id="preview" hidden></pre><div class="dialog-actions"><button class="secondary" onclick="previewSong()">預覽</button><button class="secondary" onclick="closeModal('editorModal')">取消</button><button class="primary" onclick="saveSong()">儲存歌曲</button></div></section></div>
+<div class="dialog-backdrop" id="settingsModal" hidden onclick="closeOutside(event,'settingsModal')"><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="settingsTitle"><div class="dialog-header"><h2 id="settingsTitle">讓歌單更順手</h2><button class="icon-btn" onclick="closeModal('settingsModal')" aria-label="關閉設定">×</button></div><label class="check"><input id="showJapanese" type="checkbox" onchange="setJapanese(this.checked)">閱讀時顯示日文原文</label><div class="settings-section"><h3>雲端同步</h3><p id="settingsSync"></p><div class="field"><label for="cfgGist">Gist ID</label><input class="input" id="cfgGist" autocomplete="off" spellcheck="false"></div><div class="field"><label for="cfgToken">GitHub Token</label><input class="input" id="cfgToken" type="password" autocomplete="off" spellcheck="false"></div><p class="error" id="settingsError" role="alert"></p><div class="backup-buttons"><button class="secondary" onclick="syncNow(true)">立即同步</button><button class="primary" onclick="applySettings()">儲存連線設定</button></div></div><div class="settings-section"><h3>備份與匯入</h3><p>備份只包含歌詞資料，不含 Token。匯入會合併歌曲；相同 ID 的不同內容會保留成另一份。</p><div class="backup-buttons"><button class="secondary" onclick="exportSongs()">匯出 JSON</button><button class="secondary" onclick="document.getElementById('importFile').click()">匯入 JSON</button><button class="secondary" onclick="openTrash()">垃圾桶</button></div><input type="file" id="importFile" accept=".json,application/json" onchange="importSongs(this)" hidden></div><p class="hint">Uta 2.0 · 所有歌詞在本機也有一份。<br>清除瀏覽器資料前，請先同步或匯出備份。</p></section></div>
+<div class="dialog-backdrop" id="trashModal" hidden onclick="closeOutside(event,'trashModal')"><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="trashTitle"><div class="dialog-header"><h2 id="trashTitle">垃圾桶</h2><button class="icon-btn" onclick="closeModal('trashModal')" aria-label="關閉垃圾桶">×</button></div><p>刪除的歌曲會留在此裝置，直到你手動清空。</p><div id="trashList"></div><div class="dialog-actions"><button class="secondary" onclick="emptyTrash()">清空垃圾桶</button></div></section></div>
+<div class="toast" id="toast" role="status" hidden></div>
 <script>
-const STORE_KEY = 'romaji_config';
-const CACHE_KEY = 'romaji_cache';
-const GIST_FILE = 'romaji-lyrics.json';
-let songs=[], currentId=null, editingId=null, currentTab='all';
-let GIST_ID='', TOKEN='';
-
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-
-/* ── Config ── */
-function loadConfig(){
-  try{
-    const c=JSON.parse(localStorage.getItem(STORE_KEY)||'{}');
-    GIST_ID=c.gistId||''; TOKEN=c.token||'';
-  }catch(e){}
+'use strict';
+const CONFIG_KEY='romaji_config',CACHE_KEY='romaji_cache',GIST_FILE='romaji-lyrics.json',PREFS_KEY='romaji_preferences';
+const $=id=>document.getElementById(id);
+const clone=x=>JSON.parse(JSON.stringify(x));
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
+let config=readJSON(CONFIG_KEY,{}),prefs=Object.assign({size:18,speed:20,japanese:false,recent:{},positions:{},lastId:null},readJSON(PREFS_KEY,{}));
+if(!prefs.recent||typeof prefs.recent!=='object')prefs.recent={};if(!prefs.positions||typeof prefs.positions!=='object')prefs.positions={};
+let observedState=null,dataLoadFailed=false;
+let songs=[],base=[],trash=[],currentId=null,editingId=null,currentTab='all',syncing=false,syncAgain=false,syncTimer=null,focusMode=false,scrolling=false,scrollFrame=null,lastFrame=0,wakeLock=null,wakeWanted=false,waitingWorker=null,toastTimer=null,modalTrigger=null,editorInitial='';
+function readJSON(key,fallback){try{const value=JSON.parse(localStorage.getItem(key));return value===null?fallback:value}catch{return fallback}}
+function text(value){return typeof value==='string'?value:''}
+function normalizeLyrics(value){return text(value).replace(/\r\n?/g,'\n').split('\n').map(l=>l.replace(/[\t ]+$/g,'')).join('\n').trim()}
+function signature(s){return JSON.stringify(s?{title:s.title,artist:s.artist,japanese:s.japanese,romaji:s.romaji,fav:s.fav,tags:s.tags,source:s.source}:null)}
+function safeURL(value){try{const u=new URL(value);return ['https:','http:'].includes(u.protocol)?u.href:''}catch{return ''}}
+function normalizeSongs(input){
+ const data=Array.isArray(input)?input:input&&input.schemaVersion===2&&Array.isArray(input.songs)?input.songs:null;
+ if(!data)throw new Error('歌詞檔案格式不正確，請使用歌曲陣列或 Uta JSON 備份。');
+ const seen=new Set();return data.map(s=>{
+  if(!s||typeof s!=='object'||typeof s.title!=='string'||!s.title.trim())throw new Error('每首歌曲都需要有效的歌名。');
+  const id=typeof s.id==='string'&&s.id?s.id:uid();if(seen.has(id))throw new Error('檔案含重複歌曲 ID，請先修正後再匯入。');seen.add(id);
+  return {id,title:s.title.trim(),artist:text(s.artist),romaji:normalizeLyrics(s.romaji),japanese:normalizeLyrics(s.japanese),fav:!!s.fav,tags:Array.isArray(s.tags)?s.tags.filter(t=>typeof t==='string'):[],source:safeURL(s.source),updatedAt:text(s.updatedAt)};
+ });
 }
-function saveConfig(){localStorage.setItem(STORE_KEY,JSON.stringify({gistId:GIST_ID,token:TOKEN}))}
-
-function saveSetup(){
-  const g=document.getElementById('setupGistId').value.trim();
-  const t=document.getElementById('setupToken').value.trim();
-  const err=document.getElementById('setupErr');
-  if(!g||!t){err.textContent='請填寫 Gist ID 和 Token';err.style.display='block';return;}
-  err.style.display='none';
-  GIST_ID=g; TOKEN=t; saveConfig();
-  document.getElementById('setupScreen').style.display='none';
-  init();
+function stateKey(){return 'romaji_state_v2:'+ (config.gistId||'local')}
+function loadLocal(){
+ dataLoadFailed=false;observedState=localStorage.getItem(stateKey());const state=observedState===null?null:readJSON(stateKey(),{__invalid:true});let legacy=null;
+ if(!state&&!readJSON('romaji_migrated',false))legacy=localStorage.getItem(CACHE_KEY)===null?[]:readJSON(CACHE_KEY,{__invalid:true});
+ try{if(state&&state.__invalid)throw new Error('Invalid local state');songs=normalizeSongs(state?state.songs:legacy||[]);base=normalizeSongs(state?state.base:songs);trash=normalizeSongs(state?state.trash||[]:[])}catch{dataLoadFailed=true;songs=[];base=[];trash=[];showToast('本機資料格式異常，已停止寫入。請先匯出原始資料備份。',null,6500)}
 }
-function openSettingsModal(){
-  document.getElementById('cfgGistId').value=GIST_ID;
-  document.getElementById('cfgToken').value=TOKEN;
-  openModal('settingsModal');
+function hasPending(){const b=new Map(base.map(s=>[s.id,s]));return songs.some(s=>signature(s)!==signature(b.get(s.id)))||base.some(s=>!songs.some(x=>x.id===s.id))}
+function persist(){
+ if(dataLoadFailed){setStatus('err','本機資料格式異常 · 已停止寫入');showToast('請先匯出原始資料備份，再修復本機資料。');return false}
+ try{if(localStorage.getItem(stateKey())!==observedState){setStatus('err','另一分頁已更新 · 請重新載入');showToast('另一分頁已更新。請匯出目前變更作備份，再重新載入此頁。',null,6500);return false}const serialized=JSON.stringify({schemaVersion:2,songs,base,trash});localStorage.setItem(stateKey(),serialized);observedState=serialized;localStorage.setItem('romaji_migrated','true');try{localStorage.setItem(CACHE_KEY,JSON.stringify(songs))}catch{}return true}
+ catch{showToast('本機空間不足，請先匯出 JSON 備份；這次變更仍在畫面中。');setStatus('err','本機儲存失敗');return false}
 }
-function applySettings(){
-  GIST_ID=document.getElementById('cfgGistId').value.trim();
-  TOKEN=document.getElementById('cfgToken').value.trim();
-  saveConfig(); closeModal('settingsModal');
-  init();
-}
-
-/* ── Gist API ── */
+function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify(prefs))}catch{}}
+function commit(){const saved=persist();renderList();if(saved){setStatus(hasPending()?'pending':'ok',config.gistId?(hasPending()?'本機已儲存 · 待同步':'已同步'):'本機已儲存');scheduleSync()}return saved}
+function scheduleSync(){clearTimeout(syncTimer);if(config.gistId&&config.token)syncTimer=setTimeout(()=>syncNow(),700)}
+function setStatus(state,label){$('syncDot').className='dot '+state;$('syncLabel').textContent=label;$('settingsSync').textContent=label}
 async function gistFetch(method,body){
-  const res=await fetch(`https://api.github.com/gists/${GIST_ID}`,{
-    method,
-    headers:{'Authorization':`token ${TOKEN}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
-    body:body?JSON.stringify(body):undefined
-  });
-  if(!res.ok)throw new Error(`HTTP ${res.status}`);
-  return res.json();
+ const res=await fetch('https://api.github.com/gists/'+encodeURIComponent(config.gistId),{method,cache:'no-store',signal:AbortSignal.timeout(15000),headers:{Authorization:'Bearer '+config.token,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+ if(!res.ok)throw new Error(res.status===401||res.status===403?'Token 無效或權限不足，請檢查連線設定。':res.status===404?'找不到 Gist，請檢查 ID 與權限。':'GitHub 暫時無法同步（'+res.status+'）。');return res.json();
 }
-
-async function loadFromGist(){
-  setSyncStatus('ing','同步中…');
-  document.getElementById('loadingScreen').style.display='flex';
-  try{
-    const data=await gistFetch('GET');
-    const content=data.files[GIST_FILE]?.content||'[]';
-    songs=JSON.parse(content);
-    localStorage.setItem(CACHE_KEY,JSON.stringify(songs));
-    setSyncStatus('ok','已同步');
-  }catch(e){
-    const cached=localStorage.getItem(CACHE_KEY);
-    if(cached){songs=JSON.parse(cached);setSyncStatus('err','離線（使用快取）');}
-    else{songs=[];setSyncStatus('err','無法連線');}
+function mergeSongs(remote,baseline,local){
+ const b=new Map(baseline.map(s=>[s.id,s])),l=new Map(local.map(s=>[s.id,s])),r=new Map(remote.map(s=>[s.id,s])),result=new Map(remote.map(s=>[s.id,clone(s)]));let conflicts=0;
+ for(const id of new Set([...b.keys(),...l.keys()])){
+  const previous=b.get(id),mine=l.get(id),cloud=r.get(id);if(signature(mine)===signature(previous))continue;
+  if(signature(cloud)===signature(previous)||signature(cloud)===signature(mine)){if(mine)result.set(id,clone(mine));else result.delete(id)}
+  else{conflicts++;if(mine){const copy=clone(mine);copy.id=uid();copy.title+='（本機版本）';copy.updatedAt=new Date().toISOString();result.set(copy.id,copy)}}
+ }
+ return {songs:[...result.values()],conflicts};
+}
+async function syncNow(manual=false){
+ if(dataLoadFailed){setStatus('err','本機資料格式異常 · 已停止同步');return false}if(syncing){syncAgain=true;return false}if(!config.gistId||!config.token){setStatus('pending','本機收藏 · 尚未連線');if(manual)openSettings();return false}
+ if(!navigator.onLine){setStatus('pending',hasPending()?'離線 · 有待同步變更':'離線 · 使用本機歌單');if(manual)showToast('恢復連線後會自動同步。');return false}
+ syncing=true;setStatus('ing','同步中…');let success=false;
+ try{
+  const data=await gistFetch('GET');const file=data.files&&data.files[GIST_FILE];if(data.truncated)throw new Error('Gist 檔案清單不完整，已暫停同步以保護資料。');if(file&&file.truncated)throw new Error('Gist 歌詞檔案過大，請先縮小檔案再同步。');
+  const remote=normalizeSongs(file?JSON.parse(file.content):[]);
+  const merged=mergeSongs(remote,base,songs);songs=merged.songs;base=clone(remote);
+  if(!persist())throw new Error('無法保存本機資料，已暫停雲端寫入。');refreshReader();renderList();
+  if(merged.conflicts)showToast('發現 '+merged.conflicts+' 處同步差異：保留雲端內容，編輯另存為「本機版本」。',null,6500);
+  if(hasPending()){
+   const snapshot=clone(songs),content=JSON.stringify(snapshot,null,2);if(new Blob([content]).size>950000)throw new Error('歌單已接近 Gist 讀取上限，請先匯出備份並減少歌詞資料。');await gistFetch('PATCH',{files:{[GIST_FILE]:{content}}});base=snapshot;if(!persist())throw new Error('已傳送雲端，但本機狀態無法保存，請匯出備份。');
   }
-  document.getElementById('loadingScreen').style.display='none';
-  renderList();
-  if(songs.length>0)selectSong(songs[0].id);
+  const time=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});setStatus(hasPending()?'pending':'ok',hasPending()?'本機已儲存 · 待同步':'已同步 · '+time);success=true;if(manual)showToast(hasPending()?'仍有新變更，繼續同步中。':'歌單已同步。');
+ }catch(e){setStatus('err','同步失敗 · 本機資料保留');if(manual)showToast(e.name==='TimeoutError'?'連線逾時，請稍後重試。':e.message||'無法連線，請稍後重試。',null,6000)}
+ finally{syncing=false;const again=syncAgain||(success&&hasPending());syncAgain=false;if(again)scheduleSync()}
+ return success;
 }
-
-async function saveToGist(){
-  setSyncStatus('ing','儲存中…');
-  try{
-    await gistFetch('PATCH',{files:{[GIST_FILE]:{content:JSON.stringify(songs,null,2)}}});
-    localStorage.setItem(CACHE_KEY,JSON.stringify(songs));
-    setSyncStatus('ok','已同步');
-  }catch(e){
-    setSyncStatus('err','儲存失敗');
-    showToast('⚠️ 雲端儲存失敗，資料暫存本機');
-  }
-}
-
-function setSyncStatus(state,label){
-  const d=document.getElementById('syncDot'),l=document.getElementById('syncLabel');
-  d.className='sync-dot'+(state==='ok'?' ok':state==='err'?' err':' ing');
-  l.textContent=label;
-}
-async function manualSync(){await loadFromGist();showToast('已重新載入歌單')}
-
-/* ── Tab / List ── */
-function setTab(t,el){currentTab=t;document.querySelectorAll('.ftab').forEach(x=>x.classList.remove('on'));el.classList.add('on');renderList()}
+function setTab(tab){currentTab=tab;document.querySelectorAll('.tab').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('active',on);b.setAttribute('aria-selected',String(on))});renderList()}
 function renderList(){
-  const q=(document.getElementById('searchInput').value||'').toLowerCase();
-  const list=songs.filter(s=>{
-    if(currentTab==='fav'&&!s.fav)return false;
-    if(q&&!s.title.toLowerCase().includes(q)&&!(s.artist||'').toLowerCase().includes(q))return false;
-    return true;
-  });
-  const el=document.getElementById('songList');
-  if(!list.length){el.innerHTML=`<div class="no-songs">${currentTab==='fav'?'尚無收藏歌曲':'找不到符合的歌曲'}</div>`;return;}
-  el.innerHTML=list.map(s=>`
-    <div class="song-item${s.id===currentId?' on':''}" onclick="selectSong('${s.id}')">
-      <div class="song-meta">
-        <div class="song-name">${esc(s.title)}</div>
-        <div class="song-artist">${esc(s.artist||'')}</div>
-      </div>
-      <button class="fav-star${s.fav?' on':''}" onclick="toggleFav(event,'${s.id}')">
-        <i class="ti ${s.fav?'ti-heart-filled':'ti-heart'}"></i>
-      </button>
-    </div>`).join('');
+ const q=$('searchInput').value.trim().toLocaleLowerCase();let list=songs.filter(s=>(currentTab!=='fav'||s.fav)&&(currentTab!=='recent'||prefs.recent[s.id])&&[s.title,s.artist,s.romaji,...s.tags].join(' ').toLocaleLowerCase().includes(q));
+ if(currentTab==='recent')list.sort((a,b)=>(prefs.recent[b.id]||0)-(prefs.recent[a.id]||0));else list.sort((a,b)=>Number(b.fav)-Number(a.fav));
+ $('songCount').textContent=list.length+' 首';$('listLabel').textContent=currentTab==='recent'?'最近唱過的歌':currentTab==='fav'?'喜歡的歌':'你的歌單';const root=$('songList');root.replaceChildren();
+ if(!list.length){const div=document.createElement('div');div.className='no-songs';div.textContent=q?'找不到這首歌，試試另一句歌詞。':currentTab==='recent'?'打開歌曲後，就會出現在這裡。':currentTab==='fav'?'點擊 ♡，留住你常唱的歌。':'還沒有歌曲。從下方新增一首吧。';root.append(div);return}
+ list.forEach((song,index)=>{
+  const row=document.createElement('div');row.className='song-row'+(song.id===currentId?' active':'');const open=document.createElement('button');open.className='song-open';open.onclick=()=>selectSong(song.id);open.setAttribute('aria-label','開啟 '+song.title);const num=document.createElement('span');num.className='song-number';num.textContent=String(index+1).padStart(2,'0');const meta=document.createElement('span');meta.className='song-meta';const title=document.createElement('span');title.className='song-title';title.textContent=song.title;const artist=document.createElement('span');artist.className='song-artist';artist.textContent=song.artist||'未填歌手';meta.append(title,artist);open.append(num,meta);const favorite=document.createElement('button');favorite.className='icon-btn favorite'+(song.fav?' on':'');favorite.textContent=song.fav?'♥':'♡';favorite.setAttribute('aria-label',(song.fav?'取消收藏 ':'收藏 ')+song.title);favorite.setAttribute('aria-pressed',String(song.fav));favorite.onclick=()=>toggleFavorite(song.id);row.append(open,favorite);root.append(row);
+ });
 }
-
-/* ── Select ── */
-function selectSong(id){
-  currentId=id;
-  const s=songs.find(x=>x.id===id);if(!s)return;
-  document.getElementById('emptyView').style.display='none';
-  document.getElementById('mainHeader').style.display='flex';
-  document.getElementById('lyricsWrap').style.display='block';
-  document.getElementById('hTitle').textContent=s.title;
-  document.getElementById('hArtist').textContent=s.artist||'';
-  updateFavBtn(s);
-  const jL=(s.japanese||'').split('\n'),rL=(s.romaji||'').split('\n');
-  const max=Math.max(jL.length,rL.length);
-  let html='';
-  for(let i=0;i<max;i++){const j=jL[i]||'',r=rL[i]||'';if(!j&&!r)continue;html+=`<div class="lyric-block">${j?`<div class="jp">${esc(j)}</div>`:''}${r?`<div class="rm">${esc(r)}</div>`:''}</div>`;}
-  document.getElementById('lyricsInner').innerHTML=html;
-  renderList();closeSidebar();
+function savePosition(){if(currentId){prefs.positions[currentId]=$('lyricsWrap').scrollTop;savePrefs()}}
+function selectSong(id){if(!songs.some(s=>s.id===id))return;savePosition();stopScroll();currentId=id;prefs.lastId=id;prefs.recent[id]=Date.now();savePrefs();refreshReader();renderList();closeLibrary();requestAnimationFrame(()=>{$('lyricsWrap').scrollTop=prefs.positions[id]||0;updateProgress()})}
+function refreshReader(){
+ const s=songs.find(x=>x.id===currentId);if(!s){currentId=null;const next=songs.find(x=>x.id===prefs.lastId)||songs[0];if(next){currentId=next.id}else{stopScroll();$('emptyView').hidden=false;['lyricsWrap','readerTools','progressBar','favoriteCurrent','editButton','deleteButton','focusButton'].forEach(id=>$(id).hidden=true);$('readerLabel').textContent='一起唱歌吧';return}}
+ const song=songs.find(x=>x.id===currentId);$('emptyView').hidden=true;['lyricsWrap','readerTools','progressBar','favoriteCurrent','editButton','deleteButton','focusButton'].forEach(id=>$(id).hidden=false);$('songTitle').textContent=song.title;$('songArtist').textContent=song.artist||'未填歌手';$('readerLabel').textContent='Romaji';$('romajiText').textContent=song.romaji||'這首歌還沒有羅馬拼音，點擊編輯來補上。';$('japaneseText').textContent=song.japanese;$('japaneseText').hidden=!prefs.japanese||!song.japanese;$('sourceLink').hidden=!safeURL(song.source);if(safeURL(song.source))$('sourceLink').href=safeURL(song.source);$('favoriteCurrent').textContent=song.fav?'♥':'♡';$('favoriteCurrent').classList.toggle('on',song.fav);$('favoriteCurrent').setAttribute('aria-pressed',String(song.fav));updateProgress();
 }
-function updateFavBtn(s){
-  const b=document.getElementById('hFavBtn');
-  b.innerHTML=`<i class="ti ${s.fav?'ti-heart-filled':'ti-heart'}"></i><span>收藏</span>`;
-  b.classList.toggle('fav-on',!!s.fav);
+function toggleFavorite(id){const song=songs.find(s=>s.id===id);if(!song)return;song.fav=!song.fav;song.updatedAt=new Date().toISOString();commit();refreshReader()}
+function editorValue(){return JSON.stringify(['fTitle','fArtist','fRomaji','fJapanese','fTags','fSource'].map(id=>$(id).value))}
+function openEditor(id=null){stopScroll();editingId=id;const song=songs.find(s=>s.id===id);$('editorTitle').textContent=song?'編輯這首歌':'收藏一首歌';const values={fTitle:song?.title||'',fArtist:song?.artist||'',fRomaji:song?.romaji||'',fJapanese:song?.japanese||'',fTags:song?.tags.join(', ')||'',fSource:song?.source||''};Object.entries(values).forEach(([key,value])=>$(key).value=value);$('editorError').textContent='';$('preview').hidden=true;editorInitial=editorValue();openModal('editorModal')}
+function previewSong(){$('preview').textContent=normalizeLyrics($('fRomaji').value)||'貼上羅馬拼音後，就能在這裡預覽。';$('preview').hidden=!$('preview').hidden}
+function saveSong(){
+ const title=$('fTitle').value.trim(),artist=$('fArtist').value.trim(),romaji=normalizeLyrics($('fRomaji').value);if(!title||!romaji){$('editorError').textContent='請填寫歌名與羅馬拼音。';$(title?'fRomaji':'fTitle').focus();return}
+ const source=$('fSource').value.trim();if(source&&!safeURL(source)){$('editorError').textContent='來源請使用有效的 http 或 https 網址。';return}
+ const duplicate=songs.find(s=>s.id!==editingId&&s.title.toLocaleLowerCase()===title.toLocaleLowerCase()&&s.artist.toLocaleLowerCase()===artist.toLocaleLowerCase());if(duplicate&&!confirm('歌單已有相同歌名與歌手，仍要保存另一首嗎？'))return;
+ const fields={title,artist,romaji,japanese:normalizeLyrics($('fJapanese').value),tags:[...new Set($('fTags').value.split(/[,，]/).map(t=>t.trim()).filter(Boolean))],source:safeURL(source),updatedAt:new Date().toISOString()};let id=editingId;const existing=songs.find(s=>s.id===id);if(existing)Object.assign(existing,fields);else{id=uid();songs.unshift({id,...fields,fav:false})}
+ if(commit()){editorInitial=editorValue();closeModal('editorModal',true);selectSong(id);showToast(config.gistId?'已保存在本機，正在同步。':'已收藏這首歌。')}
 }
-
-/* ── Fav ── */
-function toggleFav(e,id){e.stopPropagation();const s=songs.find(x=>x.id===id);if(s)s.fav=!s.fav;if(currentId===id)updateFavBtn(s);renderList();saveToGist();showToast(s.fav?'已加入收藏':'已移除收藏')}
-function toggleFavCurrent(){if(!currentId)return;const s=songs.find(x=>x.id===currentId);if(s){s.fav=!s.fav;updateFavBtn(s);renderList();saveToGist();showToast(s.fav?'已加入收藏':'已移除收藏')}}
-
-/* ── CRUD ── */
-function openAddModal(){editingId=null;document.getElementById('editModalTitle').textContent='新增歌曲';['fTitle','fArtist','fJapanese','fRomaji'].forEach(id=>document.getElementById(id).value='');openModal('editModal')}
-function editCurrent(){if(!currentId)return;const s=songs.find(x=>x.id===currentId);editingId=currentId;document.getElementById('editModalTitle').textContent='編輯歌曲';document.getElementById('fTitle').value=s.title||'';document.getElementById('fArtist').value=s.artist||'';document.getElementById('fJapanese').value=s.japanese||'';document.getElementById('fRomaji').value=s.romaji||'';openModal('editModal')}
-async function saveSong(){
-  const title=document.getElementById('fTitle').value.trim();
-  const artist=document.getElementById('fArtist').value.trim();
-  const japanese=document.getElementById('fJapanese').value.trim();
-  const romaji=document.getElementById('fRomaji').value.trim();
-  if(!title){document.getElementById('fTitle').focus();return;}
-  if(editingId){const s=songs.find(x=>x.id===editingId);Object.assign(s,{title,artist,japanese,romaji});closeModal('editModal');if(currentId===editingId)selectSong(editingId);renderList();}
-  else{const s={id:uid(),title,artist,japanese,romaji,fav:false};songs.unshift(s);closeModal('editModal');selectSong(s.id);}
-  await saveToGist();showToast(editingId?'已儲存':'已新增歌曲');
+function deleteSong(){const s=songs.find(s=>s.id===currentId);if(!s)return;if(!confirm('將「'+s.title+'」移到垃圾桶？可以稍後還原。'))return;savePosition();trash=trash.filter(x=>x.id!==s.id);trash.unshift(clone(s));songs=songs.filter(x=>x.id!==s.id);currentId=null;prefs.lastId=null;stopScroll();commit();refreshReader();$('lyricsWrap').scrollTop=0;showToast('已移到垃圾桶。',()=>restoreSong(s.id))}
+function openTrash(){renderTrash();openModal('trashModal')}
+function renderTrash(){const root=$('trashList');root.replaceChildren();if(!trash.length){root.textContent='垃圾桶是空的。';return}trash.forEach(s=>{const row=document.createElement('div');row.className='trash-item';const name=document.createElement('span');name.textContent=s.title;const button=document.createElement('button');button.className='secondary';button.textContent='還原';button.onclick=()=>restoreSong(s.id);row.append(name,button);root.append(row)})}
+function restoreSong(id){const s=trash.find(x=>x.id===id);if(!s)return;const copy=clone(s);if(songs.some(x=>x.id===copy.id))copy.id=uid();copy.updatedAt=new Date().toISOString();songs.unshift(copy);trash=trash.filter(x=>x.id!==id);commit();renderTrash();selectSong(copy.id);showToast('歌曲已還原。')}
+function emptyTrash(){if(trash.length&&confirm('永久清空此裝置的垃圾桶？')){trash=[];persist();renderTrash()}}
+function setSize(size){prefs.size=[15,18,22].includes(Number(size))?Number(size):18;document.documentElement.style.setProperty('--lyrics-size',prefs.size+'px');document.querySelectorAll('[data-size]').forEach(b=>{const on=Number(b.dataset.size)===prefs.size;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});savePrefs();updateProgress()}
+function setSpeed(speed){prefs.speed=Math.max(5,Math.min(60,Number(speed)||20));$('speedInput').value=prefs.speed;$('speedValue').textContent=prefs.speed+'px/s';savePrefs()}
+function setJapanese(value){prefs.japanese=value;savePrefs();refreshReader()}
+function toggleFocus(){focusMode=!focusMode;$('app').classList.toggle('focus',focusMode);$('focusButton').textContent=focusMode?'結束跟唱':'跟唱模式';$('focusButton').classList.toggle('on',focusMode);$('focusButton').setAttribute('aria-pressed',String(focusMode));if(!focusMode)stopScroll();requestAnimationFrame(updateProgress)}
+function toggleScroll(){if(scrolling){stopScroll();return}const wrap=$('lyricsWrap');if(wrap.scrollHeight<=wrap.clientHeight){showToast('歌詞已完整顯示，不需要捲動。');return}if(wrap.scrollTop>=wrap.scrollHeight-wrap.clientHeight-1)wrap.scrollTop=0;scrolling=true;lastFrame=0;$('scrollButton').textContent='Ⅱ 暫停捲動';$('scrollButton').classList.add('on');$('scrollButton').setAttribute('aria-pressed','true');scrollFrame=requestAnimationFrame(scrollStep)}
+let scrollFraction=0;
+function scrollStep(time){if(!scrolling)return;const wrap=$('lyricsWrap');if(lastFrame){scrollFraction+=Math.min(time-lastFrame,100)*prefs.speed/1000;const pixels=Math.floor(scrollFraction);if(pixels){wrap.scrollTop+=pixels;scrollFraction-=pixels}}lastFrame=time;if(wrap.scrollTop>=wrap.scrollHeight-wrap.clientHeight-1){stopScroll();return}scrollFrame=requestAnimationFrame(scrollStep)}
+function stopScroll(){scrolling=false;cancelAnimationFrame(scrollFrame);lastFrame=0;scrollFraction=0;$('scrollButton').textContent='▶ 自動捲動';$('scrollButton').classList.remove('on');$('scrollButton').setAttribute('aria-pressed','false')}
+function updateProgress(){const wrap=$('lyricsWrap'),max=wrap.scrollHeight-wrap.clientHeight;$('progressFill').style.width=(max>0?Math.min(100,wrap.scrollTop/max*100):100)+'%'}
+async function acquireWake(){try{wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{$('wakeButton').classList.remove('on');$('wakeButton').setAttribute('aria-pressed','false')});$('wakeButton').classList.add('on');$('wakeButton').setAttribute('aria-pressed','true')}catch{wakeWanted=false;showToast('目前無法保持螢幕亮起，請檢查省電模式。')}}
+async function toggleWake(){wakeWanted=!wakeWanted;if(wakeWanted)await acquireWake();else{await wakeLock?.release();wakeLock=null}}
+function openLibrary(){if(focusMode&&!matchMedia('(max-width:760px)').matches)toggleFocus();stopScroll();$('library').classList.add('open');$('overlay').hidden=!matchMedia('(max-width:760px)').matches;$('menuButton').setAttribute('aria-expanded','true');$('searchInput').focus()}
+function closeLibrary(){$('library').classList.remove('open');$('overlay').hidden=true;$('menuButton').setAttribute('aria-expanded','false')}
+function openModal(id){stopScroll();modalTrigger=document.activeElement;$(id).hidden=false;requestAnimationFrame(()=>$(id).querySelector('input,button')?.focus())}
+function closeModal(id,force=false){if(id==='editorModal'&&!force&&editorValue()!==editorInitial&&!confirm('放棄尚未儲存的編輯？'))return;$(id).hidden=true;if(id==='settingsModal')$('cfgToken').value='';modalTrigger?.focus()}
+function closeOutside(e,id){if(e.target.id===id)closeModal(id)}
+function showToast(message,undo=null,duration=3500){clearTimeout(toastTimer);const root=$('toast');root.replaceChildren(document.createTextNode(message));if(undo){const button=document.createElement('button');button.textContent='撤銷';button.onclick=undo;root.append(button)}root.hidden=false;toastTimer=setTimeout(()=>root.hidden=true,duration)}
+function openSettings(){$('cfgGist').value=config.gistId||'';$('cfgToken').value=config.token||'';$('showJapanese').checked=prefs.japanese;$('settingsError').textContent='';openModal('settingsModal')}
+function validConfig(gist,token){return /^[a-f\d]{20,64}$/i.test(gist)&&!!token}
+function writeConfig(next){try{localStorage.setItem(CONFIG_KEY,JSON.stringify(next));config=next;return true}catch{showToast('無法儲存連線設定，請檢查瀏覽器儲存空間。');return false}}
+async function saveSetup(){const gistId=$('setupGist').value.trim(),token=$('setupToken').value.trim();if(!validConfig(gistId,token)){$('setupError').textContent='請填寫有效的 Gist ID 與 Token。';return}if(!writeConfig({gistId,token}))return;$('setupToken').value='';$('setupModal').hidden=true;loadLocal();refreshReader();renderList();await syncNow(true)}
+function useLocal(){if(!writeConfig({gistId:'',token:'',localOnly:true}))return;$('setupToken').value='';$('setupModal').hidden=true;loadLocal();renderList();setStatus('pending','本機收藏 · 尚未連線');closeLibrary()}
+async function applySettings(){
+ const gistId=$('cfgGist').value.trim(),token=$('cfgToken').value.trim();if(!validConfig(gistId,token)){$('settingsError').textContent='請填寫有效的 Gist ID 與 Token。';return}if(syncing){$('settingsError').textContent='正在同步，請完成後再修改連線。';return}
+ const switching=gistId!==config.gistId;const moveLocal=switching&&!config.gistId;const carried=moveLocal?clone(songs):[];
+ if(switching&&config.gistId&&!confirm('切換到另一份 Gist 歌單？目前資料會留在本機，切回原 ID 即可恢復。'))return;if(!persist())return;if(!writeConfig({gistId,token}))return;closeModal('settingsModal');if(switching){savePosition();currentId=null;loadLocal();if(moveLocal){const merged=mergeSongs(songs,[],carried);songs=merged.songs;persist()}refreshReader();renderList()}await syncNow(true);
 }
-async function deleteCurrent(){
-  if(!currentId)return;
-  const s=songs.find(x=>x.id===currentId);
-  if(!confirm(`確定刪除「${s.title}」？`))return;
-  songs=songs.filter(x=>x.id!==currentId);currentId=null;
-  document.getElementById('mainHeader').style.display='none';
-  document.getElementById('lyricsWrap').style.display='none';
-  document.getElementById('emptyView').style.display='flex';
-  renderList();await saveToGist();showToast('已刪除');
-}
-
-/* ── Sidebar / Modal / Toast ── */
-function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('on')}
-function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('on')}
-function openModal(id){document.getElementById(id).style.display='flex'}
-function closeModal(id){document.getElementById(id).style.display='none'}
-function closeModalOut(e,id){if(e.target.id===id)closeModal(id)}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-
-/* ── Init ── */
-function init(){loadFromGist()}
-
-loadConfig();
-if(!GIST_ID||!TOKEN){
-  document.getElementById('setupScreen').style.display='flex';
-} else {
-  init();
-}
-
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
-}
+function exportSongs(){const data={schemaVersion:2,exportedAt:new Date().toISOString(),songs};const output=dataLoadFailed?(observedState||localStorage.getItem(CACHE_KEY)||'{}'):JSON.stringify(data,null,2);const blob=new Blob([output],{type:'application/json'});const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='romaji-lyrics-'+new Date().toISOString().slice(0,10)+'.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);showToast(dataLoadFailed?'原始資料已匯出，可供修復。':'備份已匯出，不包含連線設定。')}
+async function importSongs(input){try{const file=input.files[0];if(!file)return;if(file.size>10*1024*1024)throw new Error('請匯入 10 MB 以下的 JSON 檔案。');const imported=normalizeSongs(JSON.parse(await file.text()));if(!imported.length)throw new Error('備份沒有歌曲。');if(!confirm(dataLoadFailed?'將匯入資料用於修復異常本機歌單？請確認已匯出原始資料備份。':'將 '+imported.length+' 首歌曲合併到歌單？既有歌曲會保留。'))return;dataLoadFailed=false;const merged=mergeSongs(songs,[],imported);songs=merged.songs;commit();refreshReader();showToast('已匯入，'+merged.conflicts+' 首差異歌曲另存為本機版本。')}catch(e){showToast(e.message||'無法匯入，請檢查 JSON 格式。',null,6000)}finally{input.value=''}}
+function activateUpdate(){if(!$('editorModal').hidden&&editorValue()!==editorInitial){showToast('請先儲存或關閉編輯，再更新。');return}if(syncing){showToast('請等同步完成後再更新。');return}savePosition();if(!persist())return;waitingWorker?.postMessage({type:'SKIP_WAITING'})}
+function showUpdate(reg){if(reg.waiting){waitingWorker=reg.waiting;$('updateBanner').hidden=false}}
+$('lyricsWrap').addEventListener('scroll',()=>{updateProgress();clearTimeout(window.positionTimer);window.positionTimer=setTimeout(savePosition,250)},{passive:true});['touchstart','wheel','pointerdown'].forEach(event=>$('lyricsWrap').addEventListener(event,stopScroll,{passive:true}));$('lyricsWrap').addEventListener('keydown',e=>{if(['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '].includes(e.key))stopScroll()});$('lyricsWrap').tabIndex=0;
+window.addEventListener('pagehide',savePosition);window.addEventListener('online',()=>syncNow());window.addEventListener('offline',()=>setStatus('pending',hasPending()?'離線 · 有待同步變更':'離線 · 使用本機歌單'));window.addEventListener('resize',updateProgress);
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stopScroll();savePosition()}else{if(wakeWanted&&navigator.wakeLock)acquireWake();if(!$('setupModal').hidden)return;if(config.gistId)syncNow()}});
+document.addEventListener('keydown',e=>{const modal=[...document.querySelectorAll('.dialog-backdrop')].reverse().find(m=>!m.hidden);if(e.key==='Escape'){if(modal&&modal.id!=='setupModal')closeModal(modal.id);else closeLibrary()}if(e.key==='Tab'&&modal){const items=[...modal.querySelectorAll('button,input,textarea,a,summary')].filter(x=>!x.disabled&&x.getClientRects().length);const first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}}});
+window.addEventListener('storage',e=>{if(e.key===stateKey())showToast('另一個分頁更新了歌單。請在該分頁繼續編輯，避免互相覆蓋。',null,6000)});
+loadLocal();setSize(prefs.size);setSpeed(prefs.speed);renderList();if(prefs.lastId&&songs.some(s=>s.id===prefs.lastId)){currentId=prefs.lastId;refreshReader();requestAnimationFrame(()=>{$('lyricsWrap').scrollTop=prefs.positions[currentId]||0})}
+if(navigator.wakeLock)$('wakeButton').hidden=false;
+if(config.gistId&&config.token)syncNow();else if(config.localOnly)setStatus('pending','本機收藏 · 尚未連線');else openModal('setupModal');
+if('serviceWorker' in navigator){let reloading=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloading)return;reloading=true;location.reload()});window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js');showUpdate(reg);reg.addEventListener('updatefound',()=>{const worker=reg.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)showUpdate(reg)})});await reg.update()}catch{}})}
 </script>
 </body>
 </html>

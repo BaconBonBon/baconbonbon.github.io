@@ -1,18 +1,13 @@
 {
-  "name": "歌詞ライブラリ",
-  "short_name": "歌詞",
-  "description": "日文歌詞羅馬拼音收藏庫",
-  "start_url": "/",
+  "id": "/",
+  "name": "Uta · 你的歌詞收藏",
+  "short_name": "Uta",
+  "description": "羅馬拼音優先，隨時收藏、閱讀與跟唱日文歌曲。",
+  "lang": "zh-Hant",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#F8F7FF",
-  "theme_color": "#7C3AED",
-  "orientation": "portrait-primary",
-  "icons": [
-    {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
+  "background_color": "#F6F5F1",
+  "theme_color": "#F6F5F1",
+  "icons": [{"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}]
 }

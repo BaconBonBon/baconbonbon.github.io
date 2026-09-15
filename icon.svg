@@ -1,4 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#7C3AED"/>
-  <text x="256" y="340" font-size="280" text-anchor="middle" fill="white" font-family="serif">♪</text>
+ <rect width="512" height="512" rx="116" fill="#72618E"/>
+ <circle cx="256" cy="256" r="153" fill="none" stroke="#FFFDF7" stroke-opacity=".25" stroke-width="3"/>
+ <path d="M230 310V174l105-24v136M230 211l105-24" fill="none" stroke="#FFFDF7" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+ <ellipse cx="204" cy="315" rx="35" ry="26" transform="rotate(-20 204 315)" fill="#FFFDF7"/>
+ <ellipse cx="309" cy="291" rx="35" ry="26" transform="rotate(-20 309 291)" fill="#FFFDF7"/>
+ <circle cx="379" cy="165" r="9" fill="#DAD0E6"/>
 </svg>
