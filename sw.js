@@ -1,4 +1,4 @@
-const CACHE = 'romaji-v2-20260916-joysound-8';
+const CACHE = 'romaji-v2-20260916-joysound-return-9';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.svg'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
