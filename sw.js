@@ -1,4 +1,4 @@
-const CACHE = 'romaji-v2-20260924-practice-health-16';
+const CACHE = 'romaji-v2-20260924-header-fix-17';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', event => {
