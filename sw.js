@@ -1,4 +1,4 @@
-const CACHE = 'romaji-v2-20260917-joysound-query-10';
+const CACHE = 'romaji-v2-20260924-romanizer-11';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.svg'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
@@ -16,12 +16,14 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const request = event.request;
   const url = new URL(request.url);
-  if (request.method !== 'GET' || url.origin !== self.location.origin) return;
+  if (request.method !== 'GET') return;
+  const isRomanizer=url.hostname==='cdn.jsdelivr.net'&&(/\/(kuroshiro|kuroshiro-analyzer-kuromoji|kuromoji)@/.test(url.pathname));
+  if(url.origin!==self.location.origin&&!isRomanizer)return;
   const scope = new URL(self.registration.scope);
-  if (!ASSETS.some(asset => new URL(asset, scope).pathname === url.pathname)) return;
+  if(url.origin===self.location.origin&&!ASSETS.some(asset => new URL(asset, scope).pathname === url.pathname))return;
   event.respondWith(caches.open(CACHE).then(async cache => {
-    const cached = await cache.match(request, {ignoreSearch: true});
+    const cached = await cache.match(request, {ignoreSearch: url.origin===self.location.origin});
     if (cached) return cached;
-    return fetch(request);
+    const response=await fetch(request);if(response.ok||response.type==='opaque')cache.put(request,response.clone());return response;
   }));
 });
