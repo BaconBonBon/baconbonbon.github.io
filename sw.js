@@ -1,4 +1,4 @@
-const CACHE = 'romaji-v2-20260924-lyrics-audit-19';
+const CACHE = 'romaji-v2-20260924-latest-audit-20';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', event => {
