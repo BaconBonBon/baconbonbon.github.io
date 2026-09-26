@@ -1,4 +1,4 @@
-const CACHE = 'romaji-v2-20260926-data-tools-1';
+const CACHE = 'romaji-v2-20260926-data-tools-2';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.svg', './enhancements.js'];
 
 self.addEventListener('install', event => {
@@ -12,7 +12,6 @@ self.addEventListener('install', event => {
       await cache.put(url, response);
     }));
   })());
-  // Existing clients explicitly accept the update before activation.
 });
 
 self.addEventListener('message', event => {
@@ -24,6 +23,15 @@ self.addEventListener('activate', event => {
     keys.filter(key => key.startsWith('romaji-') && key !== CACHE).map(key => caches.delete(key))
   )));
 });
+
+async function enhancedPage(response){
+  if(!response?.ok) return response;
+  const html=await response.text();
+  if(html.includes('src="enhancements.js"')) return new Response(html,{status:response.status,statusText:response.statusText,headers:response.headers});
+  const output=html.replace('</body>','<script src="enhancements.js"></script>\n</body>');
+  const headers=new Headers(response.headers);headers.set('content-type','text/html; charset=utf-8');
+  return new Response(output,{status:response.status,statusText:response.statusText,headers});
+}
 
 self.addEventListener('fetch', event => {
   const request = event.request;
@@ -48,10 +56,10 @@ self.addEventListener('fetch', event => {
       try {
         const response = await fetch(request, {cache: 'no-store'});
         if (response.ok) await cache.put(new URL('./index.html', scope), response.clone());
-        return response;
+        return enhancedPage(response);
       } catch {
-        return (await cache.match(new URL('./index.html', scope))) ||
-          (await cache.match(new URL('./', scope)));
+        const cached=(await cache.match(new URL('./index.html', scope))) || (await cache.match(new URL('./', scope)));
+        return enhancedPage(cached);
       }
     })());
     return;
