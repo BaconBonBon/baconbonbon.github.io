@@ -1,5 +1,5 @@
-const CACHE = 'romaji-v2-20260924-latest-audit-20';
-const ASSETS = ['./', './index.html', './manifest.json', './icon.svg'];
+const CACHE = 'romaji-v2-20260926-data-tools-1';
+const ASSETS = ['./', './index.html', './manifest.json', './icon.svg', './enhancements.js'];
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
@@ -23,7 +23,6 @@ self.addEventListener('activate', event => {
   event.waitUntil(caches.keys().then(keys => Promise.all(
     keys.filter(key => key.startsWith('romaji-') && key !== CACHE).map(key => caches.delete(key))
   )));
-  // Existing open editors keep their current controller until the user accepts the update.
 });
 
 self.addEventListener('fetch', event => {
