@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const VERSION='2026.09.26.1';
+  const VERSION='2026.11.14.1';
   const isoDate=value=>{if(!value)return '';const d=new Date(value);return Number.isNaN(d.getTime())?'':d.toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'})};
   const today=()=>new Date().toISOString().slice(0,10);
 
