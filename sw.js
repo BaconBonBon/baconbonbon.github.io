@@ -1,4 +1,4 @@
-const CACHE = 'romaji-v2-20261114-impeccable-1';
+const CACHE = 'romaji-v2-20261114-toolbar-2';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.svg', './enhancements.js'];
 
 self.addEventListener('install', event => {
