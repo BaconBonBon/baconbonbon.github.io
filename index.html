@@ -81,6 +81,7 @@ html{color-scheme:light dark}body{-webkit-font-smoothing:antialiased;text-render
 .reader-tools{gap:9px;min-height:68px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));scroll-padding-inline:12px;scroll-snap-type:x proximity}.reader-tools>*{scroll-snap-align:start}.reader-tools .tool-group{gap:6px}.reader-tools .pill,.reader-tools .section-select,.reader-tools .icon-btn,.compact-control{height:50px;min-height:50px}.reader-tools .icon-btn{width:50px;border:1px solid var(--line);background:var(--bg)}.reader-tools .pill{padding:0 15px;font-size:13px}.reader-tools .section-select{max-width:112px;padding:0 12px;font-size:13px}.reader-tools .speed{width:92px}.reader-tools .speed-value{font-size:11px;min-width:42px}.size-cycle{min-width:74px}.size-cycle span{font-size:20px}.size-cycle small{font-size:12px}.reader-tools .line-navigation{gap:6px}.reader-tools #returnLineButton{padding:0 14px;font-size:13px}.reader-tools #themeButton{margin-left:2px}.back-to-top{bottom:calc(80px + env(safe-area-inset-bottom))}
 @media(max-width:760px){.reader-tools{gap:8px;min-height:68px;padding:8px 12px calc(8px + env(safe-area-inset-bottom))}.reader-tools .tool-group{gap:6px}.reader-tools .pill,.reader-tools .section-select,.reader-tools .icon-btn,.compact-control{height:50px;min-height:50px}.reader-tools .icon-btn{width:50px}.reader-tools .speed{width:86px}.reader-tools .section-select{max-width:104px}.back-to-top{bottom:calc(80px + env(safe-area-inset-bottom))}}
 </style>
+<link rel="stylesheet" href="design.css">
 </head>
 <body>
 <div class="app" id="app">
@@ -335,5 +336,6 @@ loadLocal();if(config.localOnly&&applyAuditTags())persist();applyTheme();matchMe
 if(config.gistId&&config.token)syncNow();else if(config.localOnly)setStatus('pending','本機收藏 · 尚未連線');else openModal('setupModal');
 if('serviceWorker' in navigator){let reloading=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloading)return;reloading=true;location.reload()});window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js');swRegistration=reg;showUpdate(reg);reg.addEventListener('updatefound',()=>{const worker=reg.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)showUpdate(reg)})});await reg.update()}catch{}})}
 </script>
+<script src="enhancements.js"></script>
 </body>
 </html>
