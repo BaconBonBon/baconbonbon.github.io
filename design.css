@@ -59,6 +59,26 @@
   --shadow-float: 0 12px 34px rgba(0, 0, 0, .38);
 }
 
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #151419;
+    --surface: #1d1b22;
+    --surface-raised: #242129;
+    --soft: #2a272f;
+    --text: #f1ece5;
+    --muted: #b7afbb;
+    --line: #3a3540;
+    --line-strong: #5b5062;
+    --accent: #c3a5d2;
+    --hover: #d0b7dc;
+    --tint: #352b3b;
+    --danger: #f09a9d;
+    --green: #91c3a5;
+    --shadow-sheet: 0 28px 90px rgba(0, 0, 0, .46);
+    --shadow-float: 0 12px 34px rgba(0, 0, 0, .38);
+  }
+}
+
 html { color-scheme: light dark; }
 body {
   background: var(--bg);
