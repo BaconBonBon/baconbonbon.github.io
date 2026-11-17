@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const VERSION='2026.11.14.2';
+  const VERSION='2026.11.17.1';
   const isoDate=value=>{if(!value)return '';const d=new Date(value);return Number.isNaN(d.getTime())?'':d.toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'})};
   const today=()=>new Date().toISOString().slice(0,10);
 
@@ -25,7 +25,7 @@
     joyFields.append(field);
   }
   const style=document.createElement('style');
-  style.textContent='.health-dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:14px 0 18px}.health-stat{border:1px solid var(--line);border-radius:13px;background:var(--bg);padding:12px}.health-stat strong{display:block;font:600 20px var(--font-mono);color:var(--accent);margin-bottom:4px}.health-stat span{font-size:10px;color:var(--muted)}.health-sync{grid-column:1/-1}.joysound-checked{font-size:10px;color:var(--muted)}@media(max-width:420px){.health-dashboard{grid-template-columns:1fr 1fr}}';
+  style.textContent='.health-dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:14px 0 18px}.health-stat{border:1px solid var(--line);border-radius:13px;background:var(--bg);padding:12px}.health-stat strong{display:block;font:600 20px var(--font-mono);color:var(--accent);margin-bottom:4px}.health-stat span{font-size:11px;color:var(--muted)}.health-sync{grid-column:1/-1}.joysound-checked{font-size:11px;color:var(--muted)}@media(max-width:420px){.health-dashboard{grid-template-columns:1fr 1fr}}';
   document.head.append(style);
 
   const baseEditorValue=editorValue;
