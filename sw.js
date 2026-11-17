@@ -1,5 +1,5 @@
-const CACHE = 'romaji-v2-20261114-toolbar-2';
-const ASSETS = ['./', './index.html', './manifest.json', './icon.svg', './enhancements.js'];
+const CACHE = 'romaji-v2-20261117-songbook-1';
+const ASSETS = ['./', './index.html', './design.css', './manifest.json', './icon.svg', './enhancements.js'];
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
