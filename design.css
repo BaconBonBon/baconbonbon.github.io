@@ -92,6 +92,29 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 }
 button:not(:disabled):active { transform: scale(.975); }
 
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--bg);
+}
+.theme-options button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+}
+.theme-options button.active {
+  background: var(--surface-raised);
+  color: var(--text);
+  box-shadow: 0 3px 12px rgba(35, 27, 39, .09);
+}
+
 /* App frame and library panel */
 .app { max-width: 1680px; background: var(--bg); }
 .library {
