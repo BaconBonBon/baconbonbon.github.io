@@ -368,6 +368,33 @@ button:not(:disabled):active { transform: scale(.975); }
 .input:focus { border-color: var(--accent); outline: 3px solid var(--tint); outline-offset: 0; }
 textarea.input { min-height: 210px; padding: 14px; }
 .hint { font-size: 12px; }
+.romanize-review {
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  background: var(--bg);
+}
+.review-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.review-heading > div { min-width: 0; }
+.review-heading strong { display: block; font-size: 14px; }
+.review-heading span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; }
+.review-preview {
+  max-height: 280px;
+  margin: 16px 0 0;
+  padding: 14px 0;
+  overflow: auto;
+  border-block: 1px solid var(--line);
+  color: var(--text);
+  font: 13px/1.85 var(--font-mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.removed-lines { margin-top: 14px; color: var(--danger); font-size: 12px; }
+.removed-lines summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; }
+.removed-lines ul { margin: 4px 0 0; padding-left: 20px; color: var(--muted); line-height: 1.7; }
+.review-actions { display: flex; justify-content: flex-end; margin-top: 16px; }
+.repair-resolve { margin-top: -4px; }
 .settings-section {
   position: relative;
   margin-top: 28px;
@@ -490,6 +517,9 @@ textarea.input { min-height: 210px; padding: 14px; }
   .quick-guide { margin-top: 38px; padding-top: 26px; }
   .guide-grid { grid-template-columns: 1fr; }
   .guide-card { padding: 18px 0; }
+  .romanize-review { padding: 14px; }
+  .review-heading { gap: 8px; }
+  .review-actions .primary { width: 100%; }
   .reader-tools {
     min-height: var(--toolbar-h);
     gap: 8px;

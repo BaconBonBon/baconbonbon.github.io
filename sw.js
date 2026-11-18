@@ -1,4 +1,4 @@
-const CACHE = 'romaji-v2-20261118-repair-tab-1';
+const CACHE = 'romaji-v2-20261118-lyric-assistant-1';
 const ASSETS = ['./', './index.html', './design.css', './manifest.json', './icon.svg', './enhancements.js'];
 
 self.addEventListener('install', event => {
