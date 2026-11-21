@@ -1,4 +1,4 @@
-const CACHE = 'romaji-v2-20261122-search-clear-1';
+const CACHE = 'romaji-v2-20261122-search-clear-2';
 const ASSETS = ['./', './index.html', './design.css', './manifest.json', './icon.svg', './enhancements.js', './romanizer-worker.js'];
 
 self.addEventListener('install', event => {

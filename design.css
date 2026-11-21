@@ -145,6 +145,7 @@ button:not(:disabled):active { transform: scale(.975); }
 .search:focus-within { border-color: var(--line); box-shadow: none; }
 .search:focus-within .search-icon { color: var(--accent); }
 .search input { flex: 1; min-width: 0; padding: 13px 0; }
+.search input:focus-visible { outline: none; }
 .search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
 .search-clear {
   display: inline-grid;
